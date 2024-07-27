@@ -1,0 +1,10 @@
+**/__pycache__/
+.env
+.idea
+.vscode
+*.swp
+*.swo
+.venv
+.DS_STORE
+*.iml
+.pytest_cache/
