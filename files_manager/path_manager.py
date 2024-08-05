@@ -19,10 +19,14 @@ def execute_path(message: str, file_accept: bool = False):
     if message_type == FileMessageTypeEnum.DEFAULT:
         complete_path, file_type = create_complete_filepath()
 
-    if message_type in (
-        FileMessageTypeEnum.ABSOLUTE,
-        FileMessageTypeEnum.FILETYPE_WITH_FILE_NAME,
-    ) and "." in message:
+    if (
+        message_type
+        in (
+            FileMessageTypeEnum.ABSOLUTE,
+            FileMessageTypeEnum.FILETYPE_WITH_FILE_NAME,
+        )
+        and "." in message
+    ):
         complete_path, file_type = message.split(".")
         file_type = "." + file_type
 
@@ -48,9 +52,9 @@ def execute_path(message: str, file_accept: bool = False):
 def create_complete_filepath(
     file_name: str = None, file_format: str = ".csv"
 ) -> tuple[str, str]:
-    string_time = datetime.now().strftime("%Y-%m-%d:%H.%M.%S")
+    string_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     if not file_name:
-        file_name = f"{string_time}-{uuid4()}"
+        file_name = f"{string_time} {uuid4()}"
 
     full_path = DEFAULT_SAVE_DIR + f"{file_name}{file_format}"
     return full_path, file_format

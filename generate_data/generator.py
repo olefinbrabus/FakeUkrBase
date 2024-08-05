@@ -6,6 +6,8 @@ from string import ascii_letters
 from config import fake, UKRAINIAN_OPERATORS
 from transliterate import translit
 
+from validations.abstract_person_validation import phone_validator
+
 
 def generate_full_name():
     return f"{fake.first_name()} {fake.last_name()}"
@@ -17,17 +19,28 @@ def generate_birthdate():
     return datetime.strptime(rand_data, "%Y-%m-%d")
 
 
-def generate_email(person) -> str:
-    letters_university = _get_random_university()
-    domains: tuple = (
-        "gmail.com",
-        "ukr.net",
-        "icloud.com",
-        f"{letters_university}.edu.ua",
-    )
-    coefficients: tuple = (0.6, 0.2, 0.1, 0.1)
+def generate_email(person, exclude_education_email: bool = False, company_word: str = None) -> str:
+    letters_university = None
+    if not exclude_education_email or not company_word:
+        letters_university = _get_random_university()
 
-    chosen_domain = base_random.choices(domains, weights=coefficients)[0]
+    if company_word is None:
+        domains: tuple = (
+            "gmail.com",
+            "ukr.net",
+            "icloud.com",
+            f"{letters_university}.edu.ua",
+        )
+        coefficients: tuple
+        if exclude_education_email:
+            domains = domains[:-1]
+            coefficients = (0.6, 0.2, 0.2)
+        else:
+            coefficients = (0.6, 0.2, 0.1, 0.1)
+
+        chosen_domain = base_random.choices(domains, weights=coefficients)[0]
+    else:
+        chosen_domain = company_word.lower() + ".com"
 
     name_to_email = _get_email_name(person)
 
@@ -39,7 +52,7 @@ def _get_random_university() -> str:
 
 
 def _get_email_name(person) -> str:
-    email_name: str = translit(person.full_name.lower(), "uk", reversed=True)
+    email_name: str = transliterate_word(person.full_name.lower())
     email_name = email_name.replace("'", "")
     email_name = email_name.replace("ʼ", "")
 
@@ -65,13 +78,17 @@ def _get_email_name(person) -> str:
     return email_name
 
 
+def transliterate_word(ukrainian_word: str) -> str:
+    return translit(ukrainian_word, "uk", reversed=True)
+
+
 def random_replaced_names_in_email() -> bool:
     return fake.boolean(65)
 
 
 def generate_phone_number():
     phone_number: str = fake.phone_number()
-    while not re.match(r"\+380\s\([0-9]+\)\s[0-9]+-[0-9]+-[0-9]+", phone_number):
+    while not phone_validator(phone_number):
         phone_number = fake.phone_number()
     phone_number = phone_number[:6] + _get_random_operator() + phone_number[8:]
     return phone_number
@@ -84,3 +101,18 @@ def _get_random_operator():
 
 def generate_address():
     return fake.address()
+
+
+def generate_credit_data(person) -> str:
+    card_data = fake.credit_card_full()
+    card_data = card_data.replace("\n", "\\")
+    first_index_slash_name = card_data.index("\\")
+    second_index_slash_name = card_data.index("\\", first_index_slash_name + 1)
+    eng_full_name = transliterate_word(person.full_name)
+    card_data = card_data[:first_index_slash_name + 1] + eng_full_name + card_data[second_index_slash_name:]
+    return card_data
+
+
+def generate_employee_email(person) -> str:
+    english_word_company = transliterate_word(fake.word())
+    return generate_email(person, company_word=english_word_company)

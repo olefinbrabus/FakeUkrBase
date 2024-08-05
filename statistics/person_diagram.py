@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from dataframes.dataframe_person import PersonDataFrame
+from dataframes.dataframe_person import PersonDataFrameManager
 
 
-def phone_diagram(person_df: PersonDataFrame):
+def phone_diagram(person_df: PersonDataFrameManager):
     plt.style.use("fast")
     persons_operators_counts = person_df.get_phone_operators_count()
     counts = list(persons_operators_counts.values())
@@ -32,7 +32,7 @@ def phone_diagram(person_df: PersonDataFrame):
     plt.show()
 
 
-def first_name_diagram(person_df: PersonDataFrame):
+def first_name_diagram(person_df: PersonDataFrameManager):
     plt.style.use("classic")
     plt.title("Статистика імен")
     first_names = [
