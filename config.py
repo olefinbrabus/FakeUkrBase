@@ -15,4 +15,4 @@ UKRAINIAN_OPERATORS: dict[str, tuple] = {
     "Vodafone": (50, 66, 95, 99),
 }
 
-SUPPORT_FORMATS = (".csv", ".xlsx", ".json", ".xml", ".sql")
+SUPPORT_FORMATS = (".csv", ".xlsx", ".json", ".xml")

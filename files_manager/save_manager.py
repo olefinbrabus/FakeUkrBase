@@ -1,40 +1,26 @@
 import pandas as pd
-from dataframes.dataframe_person import PersonDataFrame
+from dataframes.dataframe_person import PersonDataFrameManager
 from openpyxl import load_workbook
 
-from exceptions import UnSupportFileFormatException
 from files_manager.path_manager import execute_path
 
 
-def save_file(frame: PersonDataFrame, complete_path):
+def save_file(frame: PersonDataFrameManager, complete_path):
     path_and_name, file_type = execute_path(complete_path)
 
-    match file_type:
-        case ".xlsx":
-            excel_write_manager(
-                frame=frame,
-                complete_path=path_and_name,
-            )
-        case ".csv":
-            csv_write_manager(
-                frame=frame,
-                complete_path=path_and_name,
+    file_write_managers = {
+        ".xlsx": excel_write_manager,
+        ".csv": csv_write_manager,
+        ".json": json_write_manager,
+        ".xml": xml_write_manager,
+    }
 
-            )
-        case ".json":
-            pass
-        case ".xml":
-            xml_write_manager(
-                frame=frame,
-                complete_path=path_and_name,
-            )
-        case ".sql":
-            pass
-        case _:
-            raise UnSupportFileFormatException(file_type)
+    write_manager = file_write_managers.get(file_type)
+
+    write_manager(frame=frame, complete_path=path_and_name)
 
 
-def excel_write_manager(frame: PersonDataFrame, complete_path):
+def excel_write_manager(frame: PersonDataFrameManager, complete_path):
     with pd.ExcelWriter(complete_path) as writer:
         frame.dataframe.to_excel(writer, sheet_name="Persons", index=False)
 
@@ -59,12 +45,16 @@ def excel_write_manager(frame: PersonDataFrame, complete_path):
     wb.save(complete_path)
 
 
-def csv_write_manager(frame: PersonDataFrame, complete_path):
+def csv_write_manager(frame: PersonDataFrameManager, complete_path):
     frame.dataframe.to_csv(complete_path, index=False, sep=";")
 
 
-def xml_write_manager(frame: PersonDataFrame, complete_path):
+def xml_write_manager(frame: PersonDataFrameManager, complete_path):
     df = frame.dataframe
-    df.columns = df.columns.map(lambda x: x.replace(' ', '_'))
+    df.columns = df.columns.map(lambda x: x.replace(" ", "_"))
 
     frame.dataframe.to_xml(complete_path, index=False)
+
+
+def json_write_manager(frame: PersonDataFrameManager, complete_path):
+    frame.dataframe.to_json(complete_path, orient="records")

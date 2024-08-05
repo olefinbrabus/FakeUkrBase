@@ -11,6 +11,7 @@ from validations.abstract_person_validation import (
     full_name_validator,
     birthdate_validator,
     phone_validator,
+    email_validator,
 )
 from config import UKRAINIAN_OPERATORS
 
@@ -87,7 +88,11 @@ class AbstractPerson:
     @email.setter
     def email(self, value):
         if value is None:
-            self._email = generate_email(self)
+            value = generate_email(self)
+        if email_validator(value):
+            self._email = value
+        else:
+            raise ValueError(f"'{value}' is not a valid email")
 
     @property
     def phone_number(self):
@@ -102,16 +107,6 @@ class AbstractPerson:
         else:
             raise ValueError(f"'{value}' is not a valid phone number")
 
-    @staticmethod
-    def phone_operator(number: str):
-        operator_number = int(number[6:8])
-
-        for operator_name, numbers in UKRAINIAN_OPERATORS.items():
-            for number in numbers:
-                if number == operator_number:
-                    return operator_name
-        return "Undefined"
-
     @property
     def address(self):
         return self._address
@@ -124,6 +119,16 @@ class AbstractPerson:
             self._address = value
         else:
             raise ValueError(f"'{value}' is not a valid address")
+
+    @staticmethod
+    def phone_operator(number: str):
+        operator_number = int(number[6:8])
+
+        for operator_name, numbers in UKRAINIAN_OPERATORS.items():
+            for number in numbers:
+                if number == operator_number:
+                    return operator_name
+        return "Undefined"
 
     def __str__(self):
         birthdate = self.birthdate.strftime("%Y-%m-%d")

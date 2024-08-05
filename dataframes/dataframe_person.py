@@ -1,12 +1,15 @@
+from typing import Any
+
 import pandas as pd
+from pandas import Timestamp
 from tabulate import tabulate
 from IPython.display import display
 
-from user.abstract_person import AbstractPerson
+from user import AbstractPerson
 from config import UKRAINIAN_OPERATORS
 
 
-class PersonDataFrame:
+class PersonDataFrameManager:
     def __init__(self, dataframe: pd.DataFrame | list[AbstractPerson]):
         self.dataframe = dataframe
 
@@ -19,17 +22,9 @@ class PersonDataFrame:
         if isinstance(value, pd.DataFrame):
             self._dataframe = value
         elif isinstance(value, list):
-            self._dataframe = self.create_dataframe(value)
+            self._dataframe = self.to_dataframe(value)
         else:
             raise TypeError(f"{value} is not a dataframe or list of persons")
-
-    @staticmethod
-    def create_dataframe(persons: list[AbstractPerson]) -> pd.DataFrame:
-        columns = [x[1:].replace("_", " ") for x in persons[0].__dict__.keys()]
-        df = pd.DataFrame(columns=columns)
-        for i, person in enumerate(persons):
-            df.loc[i] = list(person.__dict__.values())
-        return df
 
     def get_phone_operators_count(self) -> dict[str, int]:
         frame = self.dataframe["phone number"]
@@ -41,6 +36,31 @@ class PersonDataFrame:
 
     def display(self) -> None:
         display(tabulate(self._dataframe, headers=self.dataframe.keys()))
+
+    @staticmethod
+    def to_dataframe(persons: list[AbstractPerson]) -> pd.DataFrame:
+        columns = [x[1:].replace("_", " ") for x in persons[0].__dict__.keys()]
+        df = pd.DataFrame(columns=columns)
+        for i, person in enumerate(persons):
+            df.loc[i] = list(person.__dict__.values())
+        return df
+
+    def to_persons(self, person_class) -> list[AbstractPerson]:
+        list_persons: list[dict[str:Any]] = self.dataframe.to_dict(orient="records")
+
+        valid_list_persons = []
+        for person in list_persons:
+            valid_person_dict: dict[str, Any] = {}
+
+            for key, value in person.items():
+                key = key.replace(" ", "_")
+
+                if isinstance(value, Timestamp):
+                    value = value.to_pydatetime()
+                valid_person_dict[key] = value
+            valid_list_persons.append(valid_person_dict)
+
+        return [person_class(**person) for person in valid_list_persons]
 
     def __str__(self):
         return tabulate(self._dataframe, headers=self.dataframe.keys())
