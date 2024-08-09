@@ -19,7 +19,9 @@ def generate_birthdate():
     return datetime.strptime(rand_data, "%Y-%m-%d")
 
 
-def generate_email(person, exclude_education_email: bool = False, company_word: str = None) -> str:
+def generate_email(
+    person, exclude_education_email: bool = False, company_word: str = None
+) -> str:
     letters_university = None
     if not exclude_education_email or not company_word:
         letters_university = _get_random_university()
@@ -109,7 +111,11 @@ def generate_credit_data(person) -> str:
     first_index_slash_name = card_data.index("\\")
     second_index_slash_name = card_data.index("\\", first_index_slash_name + 1)
     eng_full_name = transliterate_word(person.full_name)
-    card_data = card_data[:first_index_slash_name + 1] + eng_full_name + card_data[second_index_slash_name:]
+    card_data = (
+        card_data[: first_index_slash_name + 1]
+        + eng_full_name
+        + card_data[second_index_slash_name:]
+    )
     return card_data
 
 

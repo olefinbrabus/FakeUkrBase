@@ -1,13 +1,13 @@
 from datetime import datetime
 
-from generate_data.generator import (
+from generate_data import (
     generate_full_name,
     generate_birthdate,
     generate_email,
     generate_phone_number,
     generate_address,
 )
-from validations.abstract_person_validation import (
+from validations import (
     full_name_validator,
     birthdate_validator,
     phone_validator,
@@ -19,13 +19,13 @@ from config import UKRAINIAN_OPERATORS
 class AbstractPerson:
 
     def __init__(
-        self,
-        id: int,
-        full_name: str = None,
-        birthdate: datetime = None,
-        email: str = None,
-        phone_number: str = None,
-        address: str = None,
+            self,
+            id: int,
+            full_name: str = None,
+            birthdate: datetime = None,
+            email: str = None,
+            phone_number: str = None,
+            address: str = None,
     ):
         self.id = id
         self.full_name = full_name
@@ -100,10 +100,14 @@ class AbstractPerson:
 
     @phone_number.setter
     def phone_number(self, value):
+        self._phone_number = self.abstract_phone_number(value)
+
+    @staticmethod
+    def abstract_phone_number(value):
         if value is None:
-            self._phone_number = generate_phone_number()
+            return generate_phone_number()
         elif type(value) is str and phone_validator(value):
-            self._phone_number = value
+            return value
         else:
             raise ValueError(f"'{value}' is not a valid phone number")
 
@@ -121,14 +125,17 @@ class AbstractPerson:
             raise ValueError(f"'{value}' is not a valid address")
 
     @staticmethod
-    def phone_operator(number: str):
-        operator_number = int(number[6:8])
+    def phone_operator(*numbers_person) -> list[str]:
+        operators = []
 
-        for operator_name, numbers in UKRAINIAN_OPERATORS.items():
-            for number in numbers:
-                if number == operator_number:
-                    return operator_name
-        return "Undefined"
+        for number_person in numbers_person:
+            operator_number = int(number_person[6:8])
+
+            for operator_name, numbers in UKRAINIAN_OPERATORS.items():
+                for number in numbers:
+                    if number == operator_number:
+                        operators.append(operator_name)
+        return operators
 
     def __str__(self):
         birthdate = self.birthdate.strftime("%Y-%m-%d")

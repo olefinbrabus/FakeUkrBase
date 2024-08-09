@@ -8,6 +8,7 @@ from .argv_parser import execute_symbols
 from exceptions import ConflictDataTakenException
 
 
+
 def check_argv(argv: list[str]):
     argv: list[str] = argv[1:]
     frame = None
@@ -59,9 +60,7 @@ def set_seed(seed: Any) -> None:
 
 
 def set_person(person_number):
-    persons = [
-        AbstractPerson, Employee
-    ]
+    persons = [AbstractPerson, Employee]
     if 0 < person_number > len(persons):
         raise ValueError("Person number out of range")
     return persons[person_number]
