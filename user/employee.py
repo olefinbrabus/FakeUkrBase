@@ -2,7 +2,7 @@ from datetime import datetime
 
 from generate_data.generator import generate_credit_data, generate_employee_email
 from .abstract_person import AbstractPerson
-from validations.abstract_person_validation import email_validator
+from validations import email_validator
 
 
 class Employee(AbstractPerson):
@@ -16,11 +16,12 @@ class Employee(AbstractPerson):
             address: str = None,
             credit_data: str = None,
             work_email: str = None,
-
+            work_phone_number: str = None,
     ):
         super().__init__(id, full_name, birthdate, email, phone_number, address)
         self.credit_data = credit_data
         self.work_email = work_email
+        self.work_phone_number = work_phone_number
 
     @property
     def credit_data(self):
@@ -44,8 +45,10 @@ class Employee(AbstractPerson):
         if email_validator(value):
             self._work_email = value
 
+    @property
+    def work_phone_number(self):
+        return self._work_phone_number
 
-
-
-
-
+    @work_phone_number.setter
+    def work_phone_number(self, value):
+        self._work_phone_number = self.abstract_phone_number(value)
