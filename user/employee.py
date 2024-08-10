@@ -7,16 +7,16 @@ from validations import email_validator
 
 class Employee(AbstractPerson):
     def __init__(
-            self,
-            id: int,
-            full_name: str = None,
-            birthdate: datetime = None,
-            email: str = None,
-            phone_number: str = None,
-            address: str = None,
-            credit_data: str = None,
-            work_email: str = None,
-            work_phone_number: str = None,
+        self,
+        id: int,
+        full_name: str = None,
+        birthdate: datetime = None,
+        email: str = None,
+        phone_number: str = None,
+        address: str = None,
+        credit_data: str = None,
+        work_email: str = None,
+        work_phone_number: str = None,
     ):
         super().__init__(id, full_name, birthdate, email, phone_number, address)
         self.credit_data = credit_data
