@@ -6,7 +6,7 @@ from files_manager.save_manager import save_file
 from user import AbstractPerson, Employee
 from .argv_parser import execute_symbols
 from exceptions import ConflictDataTakenException
-
+from generate_data.persons_generator import generate_person_data
 
 
 def check_argv(argv: list[str]):
@@ -47,8 +47,7 @@ def check_argv(argv: list[str]):
 def frame_by_generate_word_in_argv(
     persons_count: int, person_class
 ) -> PersonDataFrameManager:
-
-    persons = [person_class(i + 1) for i in range(persons_count)]
+    persons = generate_person_data(person_class, persons_count)
 
     frame = PersonDataFrameManager(persons)
     return frame

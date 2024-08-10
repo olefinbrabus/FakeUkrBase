@@ -19,13 +19,13 @@ from config import UKRAINIAN_OPERATORS
 class AbstractPerson:
 
     def __init__(
-            self,
-            id: int,
-            full_name: str = None,
-            birthdate: datetime = None,
-            email: str = None,
-            phone_number: str = None,
-            address: str = None,
+        self,
+        id: int,
+        full_name: str = None,
+        birthdate: datetime = None,
+        email: str = None,
+        phone_number: str = None,
+        address: str = None,
     ):
         self.id = id
         self.full_name = full_name
