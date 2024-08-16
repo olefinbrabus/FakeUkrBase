@@ -1,4 +1,4 @@
-from os.path import isdir
+from os.path import isdir, isfile
 from datetime import datetime
 from uuid import uuid4
 
@@ -7,7 +7,7 @@ from exceptions import UnSupportFileFormatException
 from .file_message_type_enum import FileMessageTypeEnum
 
 
-def execute_path(message: str, file_accept: bool = False):
+def write_save_path(message: str, file_accept: bool = False):
     message_type = FileMessageTypeEnum.define_format_type_message(message)
 
     if message_type == FileMessageTypeEnum.FILE and not file_accept:
@@ -52,9 +52,15 @@ def execute_path(message: str, file_accept: bool = False):
 def create_complete_filepath(
     file_name: str = None, file_format: str = ".csv"
 ) -> tuple[str, str]:
-    string_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    string_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     if not file_name:
-        file_name = f"{string_time} {uuid4()}"
+        file_name = f"{string_time}_{uuid4()}"
 
     full_path = DEFAULT_SAVE_DIR + f"{file_name}{file_format}"
     return full_path, file_format
+
+def write_read_path(message: str):
+    if not isfile(message):
+        raise FileNotFoundError(message)
+    complete_path, file_type = message.rsplit(".", 1)
+    return complete_path, "." + file_type

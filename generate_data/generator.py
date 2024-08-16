@@ -79,7 +79,6 @@ def _get_email_name(person) -> str:
 
     return email_name
 
-
 def transliterate_word(ukrainian_word: str) -> str:
     return translit(ukrainian_word, "uk", reversed=True)
 

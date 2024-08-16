@@ -38,3 +38,4 @@ def first_name_diagram(person_df: PersonDataFrameManager):
     first_names = [
         str(first_name).split(" ")[0] for first_name in person_df.dataframe["full name"]
     ]
+
