@@ -10,7 +10,8 @@ from config import UKRAINIAN_OPERATORS
 
 
 class PersonDataFrameManager:
-    def __init__(self, dataframe: pd.DataFrame | list[AbstractPerson]):
+    def __init__(self, dataframe: pd.DataFrame | list[AbstractPerson], person: AbstractPerson.__class__):
+        self.person = person
         self.dataframe = dataframe
 
     @property
@@ -20,7 +21,8 @@ class PersonDataFrameManager:
     @dataframe.setter
     def dataframe(self, value) -> None:
         if isinstance(value, pd.DataFrame):
-            self._dataframe = value
+            valid_persons = self.to_persons(value, self.person)
+            self._dataframe = self.to_dataframe(valid_persons)
         elif isinstance(value, list):
             self._dataframe = self.to_dataframe(value)
         else:
@@ -45,8 +47,9 @@ class PersonDataFrameManager:
             df.loc[i] = list(person.__dict__.values())
         return df
 
-    def to_persons(self, person_class) -> list[AbstractPerson]:
-        list_persons: list[dict[str:Any]] = self.dataframe.to_dict(orient="records")
+    @staticmethod
+    def to_persons(frame: pd.DataFrame, person_class) -> list[AbstractPerson]:
+        list_persons: list[dict[str:Any]] = frame.to_dict(orient="records")
 
         valid_list_persons = []
         for person in list_persons:

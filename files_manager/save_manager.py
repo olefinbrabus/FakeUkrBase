@@ -2,11 +2,11 @@ import pandas as pd
 from dataframes.dataframe_person import PersonDataFrameManager
 from openpyxl import load_workbook
 
-from files_manager.path_manager import execute_path
+from files_manager.path_manager import write_save_path
 
 
-def save_file(frame: PersonDataFrameManager, complete_path):
-    path_and_name, file_type = execute_path(complete_path)
+def save_file(frame: PersonDataFrameManager, various_path_type):
+    complete_path, file_type = write_save_path(various_path_type)
 
     file_write_managers = {
         ".xlsx": excel_write_manager,
@@ -17,10 +17,10 @@ def save_file(frame: PersonDataFrameManager, complete_path):
 
     write_manager = file_write_managers.get(file_type)
 
-    write_manager(frame=frame, complete_path=path_and_name)
+    write_manager(frame=frame, complete_path=complete_path)
 
 
-def excel_write_manager(frame: PersonDataFrameManager, complete_path):
+def excel_write_manager(frame: PersonDataFrameManager, complete_path: str):
     with pd.ExcelWriter(complete_path) as writer:
         frame.dataframe.to_excel(writer, sheet_name="Persons", index=False)
 
@@ -45,16 +45,16 @@ def excel_write_manager(frame: PersonDataFrameManager, complete_path):
     wb.save(complete_path)
 
 
-def csv_write_manager(frame: PersonDataFrameManager, complete_path):
+def csv_write_manager(frame: PersonDataFrameManager, complete_path: str):
     frame.dataframe.to_csv(complete_path, index=False, sep=";")
 
 
-def xml_write_manager(frame: PersonDataFrameManager, complete_path):
+def xml_write_manager(frame: PersonDataFrameManager, complete_path: str):
     df = frame.dataframe
     df.columns = df.columns.map(lambda x: x.replace(" ", "_"))
 
     frame.dataframe.to_xml(complete_path, index=False)
 
 
-def json_write_manager(frame: PersonDataFrameManager, complete_path):
+def json_write_manager(frame: PersonDataFrameManager, complete_path: str):
     frame.dataframe.to_json(complete_path, orient="records")

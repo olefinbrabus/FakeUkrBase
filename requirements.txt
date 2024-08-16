@@ -5,6 +5,6 @@ lxml==5.2.2
 matplotlib==3.9.1
 matplotlib-inline==0.1.7
 Faker==26.0.0
-pandas==2.2.2
+pandas==2.2.2b
 openpyxl==3.2.0b1
 transliterate==1.10.2
