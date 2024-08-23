@@ -77,9 +77,10 @@ class AbstractPerson:
             self._birthdate = value
         elif type(value) is str:
             try:
+                value = value.split()[0]
                 self._birthdate = datetime.strptime(value, "%Y-%m-%d")
             except ValueError:
-                raise f"'{value}' is not a valid birthdate, it should be YYYY-MM-DD"
+                raise ValueError(f"'{value}' is not a valid birthdate, it should be YYYY-MM-DD")
 
     @property
     def email(self):

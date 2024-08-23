@@ -32,7 +32,7 @@ def check_argv(argv: list[str]):
         frame = frame_by_generate_word_in_argv(persons_count, person)
 
     if "--read" in argv:
-        complete_path = execute_symbols(argv, "--read")
+        complete_path = execute_symbols(argv, "--read", None)
         frame = PersonDataFrameManager(read_file(complete_path),person)
 
 

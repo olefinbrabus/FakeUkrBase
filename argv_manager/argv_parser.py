@@ -2,7 +2,7 @@ from typing import Any
 
 
 def execute_symbols(
-    argv: list[str], key: str, default: Any = 10, to_int: bool = True
+    argv: list[str], key: str, default: Any, to_int: bool = True
 ) -> Any:
     if key in argv:
         index = argv.index(key)

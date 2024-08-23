@@ -29,8 +29,12 @@ def csv_read_manager(complete_path: str):
 
 
 def json_read_manager(complete_path: str):
-    pass
+    return pd.read_json(complete_path, orient="records")
 
 
 def xml_read_manager(complete_path: str):
-    pass
+    df = pd.read_xml(complete_path)
+    df.columns = df.columns.map(lambda x: x.replace("_", " "))
+
+    return df
+
