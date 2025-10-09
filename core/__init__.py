@@ -1,4 +1,4 @@
-from generate_data.generator import (
+from core.generator import (
     generate_email,
     generate_employee_email,
     generate_birthdate,

@@ -10,7 +10,11 @@ from config import UKRAINIAN_OPERATORS
 
 
 class PersonDataFrameManager:
-    def __init__(self, dataframe: pd.DataFrame | list[AbstractPerson], person: AbstractPerson.__class__):
+    def __init__(
+        self,
+        dataframe: pd.DataFrame | list[AbstractPerson],
+        person: AbstractPerson.__class__,
+    ):
         self.person = person
         self.dataframe = dataframe
 

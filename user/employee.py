@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from generate_data.generator import generate_credit_data, generate_employee_email
+from core.generator import generate_credit_data, generate_employee_email
 from .abstract_person import AbstractPerson
 from validations import email_validator
 

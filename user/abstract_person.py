@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from generate_data import (
+from core import (
     generate_full_name,
     generate_birthdate,
     generate_email,
@@ -80,7 +80,9 @@ class AbstractPerson:
                 value = value.split()[0]
                 self._birthdate = datetime.strptime(value, "%Y-%m-%d")
             except ValueError:
-                raise ValueError(f"'{value}' is not a valid birthdate, it should be YYYY-MM-DD")
+                raise ValueError(
+                    f"'{value}' is not a valid birthdate, it should be YYYY-MM-DD"
+                )
 
     @property
     def email(self):

@@ -6,7 +6,7 @@ from dataframes.dataframe_person import PersonDataFrameManager
 from files_manager import read_file, save_file
 from user import AbstractPerson, Employee
 from exceptions import ConflictDataTakenException
-from generate_data.persons_generator import generate_person_data
+from core.persons_generator import generate_person_data
 
 
 def check_argv(argv: list[str]):
@@ -33,8 +33,7 @@ def check_argv(argv: list[str]):
 
     if "--read" in argv:
         complete_path = execute_symbols(argv, "--read", None)
-        frame = PersonDataFrameManager(read_file(complete_path),person)
-
+        frame = PersonDataFrameManager(read_file(complete_path), person)
 
     if "--display" in argv or len(argv) == 0:
         frame.display()
@@ -46,7 +45,9 @@ def check_argv(argv: list[str]):
         save_file(frame, complete_path)
 
 
-def frame_by_generate_word_in_argv(persons_count: int, person_class) -> PersonDataFrameManager:
+def frame_by_generate_word_in_argv(
+    persons_count: int, person_class
+) -> PersonDataFrameManager:
     persons = generate_person_data(person_class, persons_count)
 
     frame = PersonDataFrameManager(persons, person_class)
