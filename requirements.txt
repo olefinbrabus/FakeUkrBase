@@ -14,3 +14,4 @@ matplotlib-inline
 ipython
 lxml
 openpyxl
+pydantic-extra-types
