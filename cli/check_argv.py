@@ -1,5 +1,7 @@
 from typing import Any
 
+import click
+
 from .argv_parser import execute_symbols
 from config import fake, base_random
 from dataframes.dataframe_person import PersonDataFrameManager
@@ -7,6 +9,10 @@ from files_manager import read_file, save_file
 from user import AbstractPerson, Employee
 from exceptions import ConflictDataTakenException
 from core.persons_generator import generate_person_data
+
+@click.group()
+def the_most_important_command():
+    pass
 
 
 def check_argv(argv: list[str]):
@@ -53,14 +59,18 @@ def frame_by_generate_word_in_argv(
     frame = PersonDataFrameManager(persons, person_class)
     return frame
 
-
+@click.command()
+@click.option("--seed", default=None, help="Change random seed")
+# @click.argument("seed")
 def set_seed(seed: Any) -> None:
     fake.seed_instance(seed)
     base_random.seed(seed)
 
-
+@click.command()
+@click.argument("--person")
 def set_person(person_number):
     persons = [AbstractPerson, Employee]
     if 0 < person_number > len(persons):
         raise ValueError("Person number out of range")
     return persons[person_number]
+

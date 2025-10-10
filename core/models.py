@@ -1,18 +1,20 @@
 from datetime import date
 
 from phonenumbers.phonenumber import PhoneNumber
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field, ConfigDict, with_config
 from pydantic_extra_types.payment import PaymentCardNumber, PaymentCardBrand
 
+@with_config(ConfigDict(arbitrary_types_allowed=True))
 class ConfigModel(BaseModel):
-    class Config:
-        arbitrary_types_allowed = True
+    pass
+
 
 class CreditCard(ConfigModel):
     credit_number: PaymentCardNumber
     type_credit_card: str
     date_expired: date
     card_brand: PaymentCardBrand
+    cvv: str = Field(pattern=r'^\d{4}-\d{3}-\d{3}-\d{4}$')
 
 
 class AbstractPerson(ConfigModel):
@@ -29,6 +31,10 @@ class AbstractPerson(ConfigModel):
     birthdate: date
     phone_number: PhoneNumber
     credit_card: CreditCard
+    # future features for better analyse
+    # salary: float = None
+    # amount_of_violation: int = None
+
 
     def __str__(self):
         return f"""
@@ -49,4 +55,4 @@ class AbstractEmployee(AbstractPerson):
 
 
 
-
+print(AbstractPerson.__subclasses__())
