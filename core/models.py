@@ -3,7 +3,9 @@ from decimal import Decimal
 
 from phonenumbers.phonenumber import PhoneNumber
 from pydantic import BaseModel, EmailStr, Field, ConfigDict, with_config
-from pydantic_extra_types.payment import PaymentCardNumber, PaymentCardBrand
+from pydantic_extra_types.payment import PaymentCardNumber
+
+from core.countries_data.enums import ExtendedPaymentCardBrand, TypeCreditCard
 
 
 class ConfigModel(BaseModel):
@@ -11,10 +13,11 @@ class ConfigModel(BaseModel):
 
 
 class CreditCard(ConfigModel):
-    credit_number: PaymentCardNumber
-    type_credit_card: str
+    person_full_name: str
+    number: PaymentCardNumber
+    type: TypeCreditCard
     date_expired: date
-    card_brand: PaymentCardBrand
+    brand: ExtendedPaymentCardBrand
     cvv: str = Field(pattern=r"/^[0-9]{3,4}/")
     currency: str = Field(default="USD")
     amount: Decimal = Field(default=Decimal("0.00"))
