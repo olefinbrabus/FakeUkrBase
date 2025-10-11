@@ -1,17 +1,20 @@
 from typing import Any
 
 import click
+from click import Path as ClickPath
+from pathlib import Path
 
-from .argv_parser import execute_symbols
-from config import fake, base_random
+from cli.argv_parser import execute_symbols
+from config import fake, base_random, DEFAULT_SAVE_DIR
 from dataframes.dataframe_person import PersonDataFrameManager
 from files_manager import read_file, save_file
-from user import AbstractPerson, Employee
+# from user import AbstractPerson, Employee
+from core import AbstractPerson, AbstractEmployee
 from exceptions import ConflictDataTakenException
 from core.persons_generator import generate_person_data
 
 @click.group()
-def the_most_important_command():
+def the_most_important_commands():
     pass
 
 
@@ -61,16 +64,37 @@ def frame_by_generate_word_in_argv(
 
 @click.command()
 @click.option("--seed", default=None, help="Change random seed")
-# @click.argument("seed")
 def set_seed(seed: Any) -> None:
     fake.seed_instance(seed)
     base_random.seed(seed)
 
-@click.command()
-@click.argument("--person")
-def set_person(person_number):
-    persons = [AbstractPerson, Employee]
-    if 0 < person_number > len(persons):
-        raise ValueError("Person number out of range")
-    return persons[person_number]
 
+@click.command()
+@click.option("--person", default="abstractperson", help="Change person with different fields")
+@click.pass_context
+def set_person(ctx, person: str) -> None:
+    persons_classes = [AbstractPerson, AbstractEmployee]
+    persons_name_str: dict = {person.__name__.lower(): person for person in persons_classes}
+
+    ctx.obj["person"] = persons_name_str[person]
+
+@click.command()
+@click.option("--generate", default = 10, type=int , help="Generate of amount of people")
+def generate_person(generate):
+    pass
+
+@click.command()
+@click.option("--display", default = 10, type=int , help="Display of amount of people")
+def display_person(display):
+    if display < 1:
+        raise ValueError("Display must be greater than 0")
+
+@click.command()
+@click.option(
+    "--save",
+    default=DEFAULT_SAVE_DIR,
+    type=ClickPath(exists=False, path_type=Path),
+    help="Save path"
+)
+def save_file(save: Path):
+    pass
