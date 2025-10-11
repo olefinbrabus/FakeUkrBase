@@ -6,7 +6,6 @@ from pydantic import BaseModel, EmailStr, Field, ConfigDict, with_config
 from pydantic_extra_types.payment import PaymentCardNumber, PaymentCardBrand
 
 
-
 class ConfigModel(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -16,9 +15,9 @@ class CreditCard(ConfigModel):
     type_credit_card: str
     date_expired: date
     card_brand: PaymentCardBrand
-    cvv: str = Field(pattern=r'^\d{4}-\d{3}-\d{3}-\d{4}$')
-    currency: str = Field(default='USD')
-    amount: Decimal = Field(default=Decimal('0.00'))
+    cvv: str = Field(pattern=r"/^[0-9]{3,4}/")
+    currency: str = Field(default="USD")
+    amount: Decimal = Field(default=Decimal("0.00"))
 
 
 class AbstractPerson(ConfigModel):
@@ -39,7 +38,6 @@ class AbstractPerson(ConfigModel):
     # salary: float = None
     # amount_of_violation: int = None
 
-
     def __str__(self):
         return f"""
         first_name: {self.first_name}\nsecond_name: {self.second_name}\nthird_name: {self.third_name}
@@ -48,11 +46,10 @@ class AbstractPerson(ConfigModel):
 
 """
 
+
 class AbstractEmployee(AbstractPerson):
 
     working_address: str
     working_email_address: EmailStr
     working_phone_number: PhoneNumber
     working_credit_card: CreditCard
-
-

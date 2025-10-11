@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from core import (
-    generate_full_name,
+from services.generator.email_generator import generate_email
+from services.generator.person_generator import (
     generate_birthdate,
-    generate_email,
-    generate_phone_number,
+    generate_full_name,
     generate_address,
 )
+from services.generator.phone_generator import generate_phone_number
 from validations import (
     full_name_validator,
     birthdate_validator,

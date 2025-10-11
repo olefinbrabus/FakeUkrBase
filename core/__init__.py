@@ -1,6 +1,6 @@
 from core.models import AbstractPerson, AbstractEmployee, CreditCard
 
-from core.generator import (
+from services.generator import (
     generate_email,
     generate_employee_email,
     generate_birthdate,
@@ -18,10 +18,7 @@ __all__ = [
     generate_full_name,
     generate_phone_number,
     generate_credit_data,
-
     AbstractPerson,
     AbstractEmployee,
     CreditCard,
 ]
-
-
