@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from decimal import Decimal
 
 from pydantic_extra_types.payment import PaymentCardNumber
@@ -13,11 +14,12 @@ def generate_credit_data(person_full_name: str) -> CreditCard:
     number = PaymentCardNumber(fake.credit_card_number())
     brand: ExtendedPaymentCardBrand = _generate_brand()
     cvv = base_random.randint(15,979)
-    date_expired = fake.credit_card_expire()
+    date_expired = date.today()
     person_full_name = transliterate_word(person_full_name)
-    currency = Decimal(base_random.randint(1,1_000_000) + base_random.randint(1, 99)) / 100
+    amount = Decimal(base_random.randint(1,1_000_000) + base_random.randint(1, 99)) / 100
     """for future currency have to been calculate by formula with social rating"""
     type_card = _generate_type()
+    print(date_expired)
 
 
 
@@ -36,7 +38,7 @@ def generate_credit_data(person_full_name: str) -> CreditCard:
         cvv=cvv,
         date_expired=date_expired,
         person_full_name=person_full_name,
-        currency=currency,
+        amount=amount,
         type=type_card
     )
     return card
@@ -51,4 +53,17 @@ def _generate_brand() -> ExtendedPaymentCardBrand:
     brand = ExtendedPaymentCardBrand(brand)
     return brand
 
-print(generate_credit_data("Mykola Zhunichuk"))
+def _generate_date_expire() -> date:
+    date_string = fake.credit_card_expire(start="-3y", end="+4y")
+    print(date_string)
+    valid_date_string = date_string[:2] + "-20" + date_string[3:5]
+    print(valid_date_string)
+
+
+
+    date_expire: date = datetime.strptime( valid_date_string + "-01", "%m-%Y-%d")
+
+    return date_expire
+
+# print(generate_credit_data("Mykola Zhunichuk"))
+print(_generate_date_expire())
