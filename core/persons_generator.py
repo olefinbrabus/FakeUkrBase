@@ -1,12 +1,12 @@
 from concurrent.futures import ProcessPoolExecutor, wait
 from multiprocessing import cpu_count
 
-from user import AbstractPerson
+from user import AbstractPersonOld
 
 
 def async_generate_person_data(
     person_class, persons_count: int
-) -> list[AbstractPerson]:
+) -> list[AbstractPersonOld]:
     person_list = []
 
     with ProcessPoolExecutor(max_workers=cpu_count() - 1) as executor:
@@ -19,5 +19,5 @@ def async_generate_person_data(
     return person_list
 
 
-def generate_person_data(person_class, persons_count: int) -> list[AbstractPerson]:
+def generate_person_data(person_class, persons_count: int) -> list[AbstractPersonOld]:
     return [person_class(i + 1) for i in range(persons_count)]

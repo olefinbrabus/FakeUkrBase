@@ -1,11 +1,11 @@
 from datetime import datetime
 
 from services.generator import generate_credit_data, generate_employee_email
-from .abstract_person import AbstractPerson
+from .abstract_person import AbstractPersonOld
 from validations import email_validator
 
 
-class Employee(AbstractPerson):
+class Employee(AbstractPersonOld):
     def __init__(
         self,
         id: int,

@@ -2,9 +2,13 @@ import random
 import pathlib
 
 from faker import Faker
+from mimesis import Person, Locale
+
+from core import AbstractPerson
 
 base_random = random.Random()
 fake = Faker("uk_UA")
+# person = Person(locale=Locale("en"))
 
 BASE_DIR = str(pathlib.Path(__file__).parent.absolute())
 DEFAULT_SAVE_DIR = BASE_DIR + "/" + "files" + "/"

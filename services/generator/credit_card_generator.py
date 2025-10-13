@@ -19,19 +19,7 @@ def generate_credit_data(person_full_name: str) -> CreditCard:
     amount = Decimal(base_random.randint(1,1_000_000) + base_random.randint(1, 99)) / 100
     """for future currency have to been calculate by formula with social rating"""
     type_card = _generate_type()
-    print(date_expired)
 
-
-
-    # card_data = card_data.replace("\n", "\\")
-    # first_index_slash_name = card_data.index("\\")
-    # second_index_slash_name = card_data.index("\\", first_index_slash_name + 1)
-    # eng_full_name = transliterate_word(person_full_name)
-    # card_data = (
-    #     card_data[: first_index_slash_name + 1]
-    #     + eng_full_name
-    #     + card_data[second_index_slash_name:]
-    # )
     card = CreditCard(
         number=number,
         brand=brand,
@@ -55,15 +43,10 @@ def _generate_brand() -> ExtendedPaymentCardBrand:
 
 def _generate_date_expire() -> date:
     date_string = fake.credit_card_expire(start="-3y", end="+4y")
-    print(date_string)
     valid_date_string = date_string[:2] + "-20" + date_string[3:5]
-    print(valid_date_string)
 
 
 
     date_expire: date = datetime.strptime( valid_date_string + "-01", "%m-%Y-%d")
 
     return date_expire
-
-# print(generate_credit_data("Mykola Zhunichuk"))
-print(_generate_date_expire())

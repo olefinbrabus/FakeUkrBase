@@ -16,7 +16,7 @@ from validations import (
 from config import UKRAINIAN_OPERATORS
 
 
-class AbstractPerson:
+class AbstractPersonOld:
 
     def __init__(
         self,

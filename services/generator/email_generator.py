@@ -7,7 +7,7 @@ from services.utils import transliterate_word
 
 
 def generate_email(
-    person, exclude_education_email: bool = False, company_word: str = None
+    person_full_name: str, exclude_education_email: bool = False, company_word: str = None
 ) -> str:
     letters_university = None
     if not exclude_education_email or not company_word:
@@ -31,7 +31,7 @@ def generate_email(
     else:
         chosen_domain = company_word.lower() + ".com"
 
-    name_to_email = _get_email_name(person)
+    name_to_email = _get_email_name(person_full_name)
 
     return f"{name_to_email}@{chosen_domain}"
 

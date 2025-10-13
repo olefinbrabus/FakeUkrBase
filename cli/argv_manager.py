@@ -5,7 +5,7 @@ from click import Path as ClickPath
 from pathlib import Path
 
 # from .argv_parser import execute_symbols
-from config import fake, base_random, DEFAULT_SAVE_DIR
+from config import fake, base_random, DEFAULT_SAVE_DIR, type_person
 from dataframes.dataframe_person import PersonDataFrameManager
 from files_manager import read_file, save_file
 
@@ -87,7 +87,6 @@ def set_person(ctx, person: str) -> None:
     }
 
     ctx.obj["person"] = persons_name_str[person]
-
 
 @click.command()
 @click.option("--generate", default=10, type=int, help="Generate of amount of people")

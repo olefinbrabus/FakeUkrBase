@@ -1,6 +1,7 @@
 from datetime import date
 from decimal import Decimal
 
+from mimesis import Gender
 from phonenumbers.phonenumber import PhoneNumber
 from pydantic import BaseModel, EmailStr, Field, ConfigDict, with_config
 from pydantic_extra_types.payment import PaymentCardNumber
@@ -26,12 +27,13 @@ class CreditCard(ConfigModel):
 class AbstractPerson(ConfigModel):
 
     id: int
+    sex: Gender
     first_name: str
     first_name_county_lang: str
+    middle_name: str
+    middle_name_county_lang: str
     second_name: str
     second_name_county_lang: str
-    third_name: str
-    third_name_county_lang: str
     email_address: EmailStr
     address: str
     birthdate: date
@@ -40,6 +42,7 @@ class AbstractPerson(ConfigModel):
     # future features for better analyse
     # salary: float = None
     # amount_of_violation: int = None
+
 
     def __str__(self):
         return f"""
@@ -52,6 +55,7 @@ class AbstractPerson(ConfigModel):
 
 class AbstractEmployee(AbstractPerson):
 
+    job_type: str
     working_address: str
     working_email_address: EmailStr
     working_phone_number: PhoneNumber

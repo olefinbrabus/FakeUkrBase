@@ -52,7 +52,8 @@ def check_argv(argv: list[str]):
         # frame = PersonDataFrameManager(read_file(complete_path), person)
 
     if "--display" in argv or len(argv) == 0:
-        frame.display()
+        pass
+        # frame.display()
 
     if "--save" in argv:
         if frame is None:
