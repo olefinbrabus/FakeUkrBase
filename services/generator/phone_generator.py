@@ -3,7 +3,7 @@ import re
 from phonenumbers.phonenumber import PhoneNumber
 
 from config import fake, UKRAINIAN_OPERATORS, base_random
-from validations.abstract_person_validation import phone_validator
+from validations.abstract_person_validator import phone_validator
 
 
 def generate_phone_number():

@@ -3,6 +3,7 @@ faker
 numpy
 scipy
 pandas
+pandas-stubs
 transliterate
 tabulate
 rich
@@ -15,3 +16,5 @@ ipython
 lxml
 openpyxl
 pydantic-extra-types
+luhncheck
+progress

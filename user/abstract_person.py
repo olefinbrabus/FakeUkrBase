@@ -8,10 +8,10 @@ from services.generator.person_generator import (
 )
 from services.generator.phone_generator import generate_phone_number
 from validations import (
-    full_name_validator,
+    is_valid_ukrainian_name,
     birthdate_validator,
-    phone_validator,
-    email_validator,
+    is_valid_phone_number,
+    is_valid_email,
 )
 from config import UKRAINIAN_OPERATORS
 
@@ -58,7 +58,7 @@ class AbstractPersonOld:
     def full_name(self, value: str):
         if value is None:
             self._full_name = generate_full_name()
-        elif full_name_validator(value):
+        elif is_valid_ukrainian_name(value):
             value = value.replace("ʼ", "")
             self._full_name = value
 
@@ -92,7 +92,7 @@ class AbstractPersonOld:
     def email(self, value):
         if value is None:
             value = generate_email(self)
-        if email_validator(value):
+        if is_valid_email(value):
             self._email = value
         else:
             raise ValueError(f"'{value}' is not a valid email")
@@ -109,7 +109,7 @@ class AbstractPersonOld:
     def abstract_phone_number(value):
         if value is None:
             return generate_phone_number()
-        elif type(value) is str and phone_validator(value):
+        elif type(value) is str and is_valid_phone_number(value):
             return value
         else:
             raise ValueError(f"'{value}' is not a valid phone number")
