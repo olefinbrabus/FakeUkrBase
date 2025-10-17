@@ -1,7 +1,8 @@
-from config import base_random
+import re
 
-from config import fake, UKRAINIAN_OPERATORS
+from phonenumbers.phonenumber import PhoneNumber
 
+from config import fake, UKRAINIAN_OPERATORS, base_random
 from validations.abstract_person_validation import phone_validator
 
 
@@ -10,7 +11,8 @@ def generate_phone_number():
     while not phone_validator(phone_number):
         phone_number = fake.phone_number()
     phone_number = phone_number[:6] + _get_random_operator() + phone_number[8:]
-    return phone_number
+    phone_number = re.sub("[^0-9]", "", phone_number)
+    return PhoneNumber(int(phone_number))
 
 
 def _get_random_operator():

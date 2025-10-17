@@ -19,7 +19,7 @@ class CreditCard(ConfigModel):
     type: TypeCreditCard
     date_expired: date
     brand: ExtendedPaymentCardBrand
-    cvv: str = Field(pattern=r"/^[0-9]{3,4}/")
+    cvv: str = Field(pattern=r"^\d{3,4}$")
     currency: str = Field(default="USD")
     amount: Decimal = Field(default=Decimal("0.00"))
 
@@ -29,11 +29,11 @@ class AbstractPerson(ConfigModel):
     id: int
     sex: Gender
     first_name: str
-    first_name_county_lang: str
+    first_name_eng_lang: str
     middle_name: str
-    middle_name_county_lang: str
+    middle_name_eng_lang: str
     second_name: str
-    second_name_county_lang: str
+    second_name_eng_lang: str
     email_address: EmailStr
     address: str
     birthdate: date
@@ -42,15 +42,6 @@ class AbstractPerson(ConfigModel):
     # future features for better analyse
     # salary: float = None
     # amount_of_violation: int = None
-
-
-    def __str__(self):
-        return f"""
-        first_name: {self.first_name}\nsecond_name: {self.second_name}\nthird_name: {self.third_name}
-        email: {self.email}\nphone_number: {self.phone_number}\naddress: {self.address}
-        \nbirthdate: {self.birthdate}
-
-"""
 
 
 class AbstractEmployee(AbstractPerson):

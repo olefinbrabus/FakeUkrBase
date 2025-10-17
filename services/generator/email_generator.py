@@ -1,3 +1,5 @@
+from datetime import date
+
 from config import base_random
 from string import ascii_letters
 
@@ -7,7 +9,10 @@ from services.utils import transliterate_word
 
 
 def generate_email(
-    person_full_name: str, exclude_education_email: bool = False, company_word: str = None
+    person_full_name: str,
+    person_birthdate: date,
+    exclude_education_email: bool = False,
+    company_word: str = None,
 ) -> str:
     letters_university = None
     if not exclude_education_email or not company_word:
@@ -31,7 +36,7 @@ def generate_email(
     else:
         chosen_domain = company_word.lower() + ".com"
 
-    name_to_email = _get_email_name(person_full_name)
+    name_to_email = _get_email_name(person_full_name, person_birthdate)
 
     return f"{name_to_email}@{chosen_domain}"
 
@@ -44,8 +49,8 @@ def random_replaced_names_in_email() -> bool:
     return fake.boolean(65)
 
 
-def _get_email_name(person) -> str:
-    email_name: str = transliterate_word(person.full_name.lower())
+def _get_email_name(person_full_name: str, person_birthdate: date) -> str:
+    email_name: str = transliterate_word(person_full_name)
     email_name = email_name.replace("'", "")
     email_name = email_name.replace("ʼ", "")
 
@@ -62,7 +67,7 @@ def _get_email_name(person) -> str:
 
     if chance_to_postfix_number:
         if fake.boolean():
-            year = str(person.birthdate.year)[2:]
+            year = str(person_birthdate.year)[2:]
             email_name += year
 
         else:
@@ -71,6 +76,10 @@ def _get_email_name(person) -> str:
     return email_name
 
 
-def generate_employee_email(person) -> str:
+def generate_employee_email(person_full_name: str, person_birthdate: date) -> str:
     english_word_company = transliterate_word(fake.word())
-    return generate_email(person, company_word=english_word_company)
+    return generate_email(
+        person_full_name,
+        person_birthdate=person_birthdate,
+        company_word=english_word_company,
+    )

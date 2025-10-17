@@ -12,7 +12,7 @@ from files_manager import read_file, save_file
 # from user import AbstractPerson, Employee
 from core import AbstractPerson, AbstractEmployee
 from exceptions import ConflictDataTakenException
-from core.persons_generator import generate_person_data
+from core.persons_generatorOld import generate_person_data
 
 # @click.group()
 # def the_most_important_commands():
@@ -87,6 +87,7 @@ def set_person(ctx, person: str) -> None:
     }
 
     ctx.obj["person"] = persons_name_str[person]
+
 
 @click.command()
 @click.option("--generate", default=10, type=int, help="Generate of amount of people")

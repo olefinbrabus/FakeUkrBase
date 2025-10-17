@@ -1,12 +1,12 @@
 from datetime import datetime
 
 from config import fake, base_random
-from mimesis import Person, Gender
-
+from mimesis import Gender
 
 
 def generate_sex():
     return Gender.FEMALE if base_random.random() < 0.5 else Gender.MALE
+
 
 def generate_full_name(gender: Gender):
     if gender == Gender.MALE:
