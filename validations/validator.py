@@ -17,7 +17,7 @@ def to_person_model(
 
 
 def validate_abstract_person(
-    person_obj: AbstractPerson | dict[str, str], person_cls: type[AbstractPerson]
+    person_obj: AbstractPerson | dict[str, str], person_cls: type[AbstractPerson] = AbstractPerson
 ) -> bool:
     if isinstance(person_obj, dict):
         person_obj = to_person_model(person_obj, person_cls)
@@ -28,7 +28,9 @@ def validate_abstract_person(
     if not is_valid_birthdate(person_obj.birthdate):
         return False
 
-    if not is_valid_ukrainian_word(person_obj.first_name, person_obj.last_name, person_obj.middle_name):
+    if not is_valid_ukrainian_word(
+        person_obj.first_name, person_obj.second_name, person_obj.middle_name
+    ):
         return False
 
     return True

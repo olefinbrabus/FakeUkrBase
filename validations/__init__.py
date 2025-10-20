@@ -14,5 +14,5 @@ __all__ = [
     is_valid_email,
     is_valid_phone_number,
     is_valid_birthdate,
-    is_valid_ukrainian_word
+    is_valid_ukrainian_word,
 ]

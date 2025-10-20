@@ -50,4 +50,4 @@ class GeneratorPersonService:
 
 gen = GeneratorPersonService()
 print(gen.make_person(0))
-[print(gen.make_person(i)) for i in range(100)]
+[print(gen.make_person(i).model_dump()) for i in range(100)]
