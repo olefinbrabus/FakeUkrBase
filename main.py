@@ -14,6 +14,7 @@ from dataframes.dataframe_person import PersonDataFrameManager
 
 # from user import AbstractPerson, Employee
 from core import AbstractPerson, AbstractEmployee
+from display.display import display_df
 from exceptions import ConflictDataTakenException
 from core.persons_generatorOld import generate_person_data
 from services.generator.generator import generate_persons
@@ -105,6 +106,10 @@ def cli_generate_person(count: int, person: str, seed: Any) -> None:
 
     persons: list[AbstractPerson] = generate_persons(count, person_class)
     validate_persons(persons, person_class)
+
+    pdfm = PersonDataFrameManager(persons, person_class)
+
+    display_df(pdfm.dataframe)
 
 
 @click.command("read")
