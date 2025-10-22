@@ -1,3 +1,5 @@
+from progress.bar import ShadyBar
+
 from core import AbstractPerson
 from validations import is_valid_ukrainian_word
 from validations.abstract_person_validator import is_valid_birthdate
@@ -17,7 +19,8 @@ def to_person_model(
 
 
 def validate_abstract_person(
-    person_obj: AbstractPerson | dict[str, str], person_cls: type[AbstractPerson] = AbstractPerson
+    person_obj: AbstractPerson | dict[str, str],
+    person_cls: type[AbstractPerson] = AbstractPerson,
 ) -> bool:
     if isinstance(person_obj, dict):
         person_obj = to_person_model(person_obj, person_cls)
@@ -34,3 +37,19 @@ def validate_abstract_person(
         return False
 
     return True
+
+
+def validate_persons(
+    person_obj: list[AbstractPerson] | dict[str, str],
+    person_cls: type[AbstractPerson] = AbstractPerson,
+):
+    persons_len = len(person_obj)
+    bar = ShadyBar(message=f"Validate {person_cls.__name__}'s...", max=persons_len)
+    for person in person_obj:
+        try:
+            validate_abstract_person(person, person_cls)
+        except Exception as e:
+            print(f"{person}{e}")
+            raise e
+        bar.next()
+    bar.finish()

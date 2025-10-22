@@ -1,10 +1,12 @@
+import os
 import random
 import pathlib
+import tempfile
 
 from faker import Faker
-from mimesis import Person, Locale
 
-from core import AbstractPerson
+# from mimesis import Person, Locale
+
 
 base_random = random.Random()
 fake = Faker("uk_UA")
@@ -20,3 +22,5 @@ UKRAINIAN_OPERATORS: dict[str, tuple] = {
 }
 
 SUPPORT_FORMATS = (".csv", ".xlsx", ".json", ".xml")
+
+SESSION_FILE_DIR = os.path.join(tempfile.gettempdir(), "fakeukrbase_session.parquet")

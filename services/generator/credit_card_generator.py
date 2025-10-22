@@ -19,7 +19,7 @@ def generate_credit_data(person_full_name: str) -> CreditCard:
     amount = (
         Decimal(base_random.randint(1, 1_000_000) + base_random.randint(1, 99)) / 100
     )
-    """for future currency have to been calculate by formula with social rating"""
+    """for future currency have to been calculate by formula via social rating"""
     type_card = _generate_type()
 
     card = CreditCard(

@@ -1,5 +1,4 @@
-from pydantic import EmailStr
-from email_validator import validate_email
+from progress.bar import ShadyBar
 
 from core import AbstractPerson, AbstractEmployee
 from services.generator.person_generator import (
@@ -48,6 +47,13 @@ class GeneratorPersonService:
         )
 
 
-gen = GeneratorPersonService()
-print(gen.make_person(0))
-[print(gen.make_person(i).model_dump()) for i in range(100)]
+def generate_persons(count: int, person_cls: type[AbstractPerson] = AbstractPerson):
+    persons_list = [] * count
+    generator_person_service = GeneratorPersonService(person_cls=person_cls)
+    bar = ShadyBar(message=f"Create {person_cls.__name__}'s...", max=count)
+    for i in range(count):
+        person = generator_person_service.make_person(i)
+        persons_list.append(person)
+        bar.next()
+    bar.finish()
+    return persons_list

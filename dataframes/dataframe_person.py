@@ -4,16 +4,15 @@ import pandas as pd
 from pandas import Timestamp
 from tabulate import tabulate
 from IPython.display import display
-
-from user import AbstractPersonOld
 from config import UKRAINIAN_OPERATORS
+from core import AbstractPerson
 
 
 class PersonDataFrameManager:
     def __init__(
         self,
-        dataframe: pd.DataFrame | list[AbstractPersonOld],
-        person: AbstractPersonOld.__class__,
+        dataframe: list[AbstractPerson],
+        person: type[AbstractPerson],
     ):
         self.person = person
         self.dataframe = dataframe
@@ -36,7 +35,7 @@ class PersonDataFrameManager:
         frame = self.dataframe["phone number"]
         phone_operators_count = {keys: 0 for keys in UKRAINIAN_OPERATORS.keys()}
         for number in frame:
-            operator = AbstractPersonOld.phone_operator(number)
+            operator = AbstractPerson.phone_operator(number)
             phone_operators_count[operator] += 1
         return phone_operators_count
 
@@ -44,7 +43,7 @@ class PersonDataFrameManager:
         display(tabulate(self._dataframe, headers=self.dataframe.keys()))
 
     @staticmethod
-    def to_dataframe(persons: list[AbstractPersonOld]) -> pd.DataFrame:
+    def to_dataframe(persons: list[AbstractPerson]) -> pd.DataFrame:
         columns = [x[1:].replace("_", " ") for x in persons[0].__dict__.keys()]
         df = pd.DataFrame(columns=columns)
         for i, person in enumerate(persons):
@@ -52,7 +51,7 @@ class PersonDataFrameManager:
         return df
 
     @staticmethod
-    def to_persons(frame: pd.DataFrame, person_class) -> list[AbstractPersonOld]:
+    def to_persons(frame: pd.DataFrame, person_class) -> list[AbstractPerson]:
         list_persons: list[dict[str:Any]] = frame.to_dict(orient="records")
 
         valid_list_persons = []

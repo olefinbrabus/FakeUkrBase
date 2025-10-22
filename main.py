@@ -1,5 +1,6 @@
 from typing import Any
-import ctypes
+
+# import ctypes
 
 import click
 from click import Path as ClickPath
@@ -8,12 +9,15 @@ from pathlib import Path
 # from .argv_parser import execute_symbols
 from config import fake, base_random, DEFAULT_SAVE_DIR
 from dataframes.dataframe_person import PersonDataFrameManager
-from files_manager import read_file, save_file
+
+# from files_manager import read_file, save_file
 
 # from user import AbstractPerson, Employee
 from core import AbstractPerson, AbstractEmployee
 from exceptions import ConflictDataTakenException
 from core.persons_generatorOld import generate_person_data
+from services.generator.generator import generate_persons
+from validations.validator import validate_persons
 
 
 @click.group()
@@ -39,7 +43,7 @@ def check_argv(argv: list[str]):
         pass
         # seed = execute_symbols(argv, "--seed", 1, False)
 
-    set_seed(seed)
+    cli_set_seed(seed)
 
     if "--generate" in argv or len(argv) == 0:
         pass
@@ -71,45 +75,50 @@ def frame_by_generate_word_in_argv(
     return frame
 
 
-@click.command()
-@click.option("--seed", default=None, help="Change random seed")
-def set_seed(seed: Any) -> None:
+def cli_set_seed(seed: Any) -> None:
     fake.seed_instance(seed)
     base_random.seed(seed)
 
 
-@click.command()
-@click.option(
-    "--person", default="abstractperson", help="Change person with different fields"
-)
-@click.pass_context
-def set_person(ctx, person: str) -> None:
+def cli_set_person(person: str) -> type[AbstractPerson]:
     persons_classes = [AbstractPerson, AbstractEmployee]
     persons_name_str: dict = {
         person.__name__.lower(): person for person in persons_classes
     }
 
-    ctx.obj["person"] = persons_name_str[person]
+    return persons_name_str[person]
 
 
-@click.command()
-@click.option("--generate", default=10, type=int, help="Generate of amount of people")
-@click.pass_context
-def generate_person(ctx, person_count: int):
-    frame_by_generate_word_in_argv(person_count, ctx.obj["person"])
+@click.command("generate")
+@click.option(
+    "--count", "-c", default=10, type=int, help="Generate of amount of people"
+)
+@click.option(
+    "--person", default="abstractperson", help="Change person with different fields"
+)
+@click.option("--seed", default=None, help="Change random seed")
+def cli_generate_person(count: int, person: str, seed: Any) -> None:
+
+    person_class = cli_set_person(person)
+
+    cli_set_seed(seed)
+
+    persons: list[AbstractPerson] = generate_persons(count, person_class)
+    validate_persons(persons, person_class)
 
 
-@click.command()
+@click.command("read")
 @click.option("--read", type=str, help="Read array of persons")
-def read_persons(read):
+def cli_read_persons(read):
     pass
 
 
-@click.command()
-@click.option("--display", default=10, type=int, help="Display of amount of people")
-def display_person(display):
+@click.command("display")
+@click.option("--count", "-c", default=10, type=int, help="Display of amount of people")
+def cli_display_person(display):
     if display < 1:
         raise ValueError("Display must be greater than 0")
+    print("display")
 
 
 @click.command()
@@ -119,16 +128,16 @@ def display_person(display):
     type=ClickPath(exists=False, path_type=Path),
     help="Save path",
 )
-def save_file(save: Path):
+def cli_save_file(save: Path):
     pass
 
 
-cli.add_command(set_seed)
-cli.add_command(set_person)
-cli.add_command(generate_person)
-cli.add_command(read_persons)
-cli.add_command(display_person)
-cli.add_command(save_file)
+# cli.add_command(cli_set_seed)
+# cli.add_command(cli_set_person)
+cli.add_command(cli_generate_person)
+cli.add_command(cli_read_persons)
+cli.add_command(cli_display_person)
+cli.add_command(cli_save_file)
 
 if __name__ == "__main__":
     cli()
