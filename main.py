@@ -68,11 +68,11 @@ def check_argv(argv: list[str]):
 
 
 def frame_by_generate_word_in_argv(
-    persons_count: int, person_class
+    persons_count: int, person_cls
 ) -> PersonDataFrameManager:
-    persons = generate_person_data(person_class, persons_count)
+    persons = generate_person_data(person_cls, persons_count)
 
-    frame = PersonDataFrameManager(persons, person_class)
+    frame = PersonDataFrameManager(persons, person_cls)
     return frame
 
 
@@ -95,9 +95,12 @@ def cli_set_person(person: str) -> type[AbstractPerson]:
     "--count", "-c", default=10, type=int, help="Generate of amount of people"
 )
 @click.option(
-    "--person", default="abstractperson", help="Change person with different fields"
+    "--person",
+    "-p",
+    default="abstractperson",
+    help="Change person with different fields",
 )
-@click.option("--seed", default=None, help="Change random seed")
+@click.option("--seed", "-s", default=None, help="Change random seed")
 def cli_generate_person(count: int, person: str, seed: Any) -> None:
 
     person_class = cli_set_person(person)

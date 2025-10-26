@@ -11,5 +11,3 @@ def get_phone_operators_count(dataframe: DataFrame) -> dict[str, int]:
         operator = AbstractPerson.phone_operator(number)
         phone_operators_count[operator] += 1
     return phone_operators_count
-
-

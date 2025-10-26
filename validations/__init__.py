@@ -3,7 +3,7 @@ from .abstract_person_validator import (
     is_valid_ukrainian_word,
 )
 
-from .email_validator import is_valid_email
+from .base_email_validator import is_valid_email
 from .phone_validator import is_valid_phone_number
 
 # from employee_validations import (

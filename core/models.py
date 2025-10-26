@@ -3,12 +3,11 @@ from decimal import Decimal
 
 from mimesis import Gender
 from phonenumbers.phonenumber import PhoneNumber
-from pydantic import BaseModel, EmailStr, Field, ConfigDict, with_config
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from pydantic_extra_types.payment import PaymentCardNumber
 
+
 from core.countries_data.enums import ExtendedPaymentCardBrand, TypeCreditCard
-
-
 class ConfigModel(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
