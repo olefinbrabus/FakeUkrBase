@@ -1,7 +1,10 @@
 from concurrent.futures import ProcessPoolExecutor, wait
 from multiprocessing import cpu_count
 
-from user import AbstractPerson
+from core import AbstractPerson
+
+
+# from user import AbstractPersonOld
 
 
 def async_generate_person_data(

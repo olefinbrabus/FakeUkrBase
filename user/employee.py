@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from generate_data.generator import generate_credit_data, generate_employee_email
-from .abstract_person import AbstractPerson
-from validations import email_validator
+from services.generator import generate_credit_data, generate_employee_email
+from .abstract_person import AbstractPersonOld
+from validations import is_valid_email
 
 
-class Employee(AbstractPerson):
+class Employee(AbstractPersonOld):
     def __init__(
         self,
         id: int,
@@ -42,7 +42,7 @@ class Employee(AbstractPerson):
     def work_email(self, value):
         if value is None:
             self._work_email = generate_employee_email(self)
-        if email_validator(value):
+        if is_valid_email(value):
             self._work_email = value
 
     @property

@@ -59,6 +59,7 @@ def create_complete_filepath(
     full_path = DEFAULT_SAVE_DIR + f"{file_name}{file_format}"
     return full_path, file_format
 
+
 def write_read_path(message: str):
     if not isfile(message):
         raise FileNotFoundError(message)

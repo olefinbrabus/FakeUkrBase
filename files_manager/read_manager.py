@@ -19,7 +19,6 @@ def read_file(various_path_type):
     return read_manager(complete_path=complete_path + file_type)
 
 
-
 def excel_read_manager(complete_path: str):
     return pd.read_excel(complete_path, sheet_name="Persons")
 
@@ -37,4 +36,3 @@ def xml_read_manager(complete_path: str):
     df.columns = df.columns.map(lambda x: x.replace("_", " "))
 
     return df
-
