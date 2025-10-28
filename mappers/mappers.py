@@ -20,6 +20,7 @@ def dict_to_person(
 def persons_to_dataframe(persons: list[AbstractPerson]) -> DataFrame:
     # columns = [x[1:].replace("_", " ") for x in persons[0].__dict__.keys()]
     columns = [x.replace("_", " ") for x in persons[0].__dict__.keys()]
+    columns = [x for x in persons[0].__dict__.keys()]
     df = DataFrame(columns=columns)
     for i, person in enumerate(persons):
         df.loc[i] = list(person.__dict__.values())
@@ -42,3 +43,9 @@ def dataframe_to_persons(frame: DataFrame, person_class) -> list[AbstractPerson]
         valid_list_persons.append(valid_person_dict)
 
     return [person_class(**person) for person in valid_list_persons]
+
+def persons_to_employees(
+    persons: list[AbstractPerson],
+    show_id: bool = True,
+):
+    ...

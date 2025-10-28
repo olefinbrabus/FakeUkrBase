@@ -35,23 +35,22 @@ def validate_person_categories(
 
     return duplicate_list_by_categories
 
-
 def validate_duplicate_items_in_dataset_by_column(dataset: DataFrame, column: str):
-    print(column)
-    print(dataset)
-    item_list = dataset[column].values.tolist()
-    print(item_list)
+    # создаём копию и приводим значения к строке
+    df = dataset.copy()
+    df[column] = df[column].astype(str)
 
-    duplicates: dict = {"_specific_word": column}
-    for i, item in enumerate(item_list):
-        if item_list.count(item) > 1:
-            if item not in duplicates:
-                duplicates[item] = [i]
-            else:
-                duplicates[item].append(i)
+    duplicates = (
+        df.groupby(column)
+        .filter(lambda x: len(x) > 1)
+        .groupby(column)
+        .indices
+    )
 
-    return duplicates
-
+    return {
+        "_specific_word": column,
+        "duplicates": {k: v for k, v in duplicates.items()},
+    }
 
 if __name__ == "__main__":
     df = DataFrame({"numbers": [1, 1, 15], "greeb": ["asass", "sadasd", "asass"]})

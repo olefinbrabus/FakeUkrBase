@@ -1,14 +1,9 @@
-import datetime
-from decimal import Decimal
-
-from mimesis import Gender
 from pandas import DataFrame
-from phonenumbers.phonenumber import PhoneNumber
 from progress.bar import ShadyBar
+from pydantic import ValidationError
 
-from core import AbstractPerson, CreditCard
-from core.countries_data.enums import TypeCreditCard, ExtendedPaymentCardBrand
-from mappers import dict_to_person, persons_to_dataframe
+from core import AbstractPerson
+from mappers import dict_to_person
 from validations import is_valid_ukrainian_word
 from validations.abstract_person_validator import is_valid_birthdate
 from validations.card_validator import is_valid_luna
@@ -59,45 +54,11 @@ def validate_person_dataset(
         person_cls,
     )
 
-    print(duplicate_list_by_categories)
-
     if duplicate_list_by_categories:
         for category in duplicate_list_by_categories:
             print(category)
-            # ids_repeatable_items = [id in ]
-            print('')
+            print(f"in {category["_specific_word"]}")
+
+        raise ValidationError("")
 
 
-# if __name__ == "main":
-persons =  [AbstractPerson(
-    **{
-        "id": 1,
-        "sex": Gender.MALE,
-        "first_name": "Сергій",
-        "first_name_eng_lang": "Serhij",
-        "middle_name": "Святославович",
-        "middle_name_eng_lang": "Svjatoslavovych",
-        "second_name": "Пелех",
-        "second_name_eng_lang": "Pelekh",
-        "email_address": "Pelekh.Serhij66@gmail.com",
-        "address": "площа Костанді, буд. 182, Вишгород, 85979",
-        "birthdate": datetime.date(1982, 12, 10),
-        "phone_number": PhoneNumber(country_code=380945670584),
-        "credit_card": CreditCard(
-            **{
-                "person_full_name": "Serhij Pelekh",
-                "number": "9040124327573011",
-                "type": TypeCreditCard.credit,
-                "date_expired": datetime.date(2025, 10, 20),
-                "brand": ExtendedPaymentCardBrand.prostir,
-                "cvv": "283",
-                "currency": "USD",
-                "amount": Decimal("3231.25"),
-            }
-        )})
-] * 10
-
-fr = persons_to_dataframe(persons)
-print(fr)
-
-validate_person_dataset(fr)
