@@ -12,7 +12,7 @@ def generate_phone_number():
         phone_number = fake.phone_number()
     phone_number = phone_number[:6] + _get_random_operator() + phone_number[8:]
     phone_number = re.sub("[^0-9]", "", phone_number)
-    return PhoneNumber(int(phone_number))
+    return PhoneNumber(int(phone_number), national_number=38)
 
 
 def _get_random_operator():

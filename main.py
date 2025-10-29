@@ -1,13 +1,15 @@
+import os
 from typing import Any
 
 # import ctypes
 
 import click
+import pandas as pd
 from click import Path as ClickPath
 from pathlib import Path
 
 # from .argv_parser import execute_symbols
-from config import fake, base_random, DEFAULT_SAVE_DIR
+from config import fake, base_random, DEFAULT_SAVE_DIR, SESSION_FILE_DIR
 from dataframes.dataframe_person import PersonDataFrameManager
 
 # from files_manager import read_file, save_file
@@ -112,7 +114,14 @@ def cli_generate_person(count: int, person: str, seed: Any) -> None:
 
     pdfm = PersonDataFrameManager(persons, person_class)
 
-    display_df(pdfm.dataframe)
+    pdfm.dataframe.to_parquet(
+        SESSION_FILE_DIR,
+        engine="fastparquet",
+        compression="snappy",
+        object_encoding="utf8"
+    )
+    click.secho(f"Generated {len(persons)} people", fg="green")
+
 
 
 @click.command("read")
@@ -123,10 +132,15 @@ def cli_read_persons(read):
 
 @click.command("display")
 @click.option("--count", "-c", default=10, type=int, help="Display of amount of people")
-def cli_display_person(display):
-    if display < 1:
+def cli_display_person(count: int) -> None:
+    if count < 1:
         raise ValueError("Display must be greater than 0")
-    print("display")
+    if not os.path.exists(SESSION_FILE_DIR):
+        raise click.ClickException("No session found. Run 'generate' first.")
+    df = pd.read_parquet(SESSION_FILE_DIR)
+
+
+    display_df(df, )
 
 
 @click.command()

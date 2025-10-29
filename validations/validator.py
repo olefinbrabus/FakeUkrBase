@@ -18,14 +18,17 @@ def validate_abstract_person(
         person_obj = dict_to_person(person_obj, person_cls)
 
     if not is_valid_luna(person_obj.credit_card.number):
+        print(f'Invalid credit card number: {person_obj.credit_card.number}')
         return False
 
     if not is_valid_birthdate(person_obj.birthdate):
+        print(f'Invalid birthdate: {person_obj.birthdate}')
         return False
 
     if not is_valid_ukrainian_word(
         person_obj.first_name, person_obj.second_name, person_obj.middle_name
     ):
+        print("Invalid ukrainian name")
         return False
 
     return True

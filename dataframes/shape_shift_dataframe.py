@@ -1,13 +1,24 @@
 from pandas import DataFrame
 
-from core import AbstractPerson
+from core import AbstractPerson, AbstractEmployee
 
 
 def change_shape_person(
         dataframe: DataFrame,
         person_cls: type[AbstractPerson],
+        columns_to_hide: dict[str, bool]
+
 ):
     dataframe = dataframe.copy(deep=True)
+
+    if person_cls == type[AbstractPerson]:
+        dataframe = change_shape_abstract_person(dataframe, **columns_to_hide)
+
+    if person_cls == type[AbstractEmployee]:
+        pass
+
+    return dataframe
+
 
 
 
