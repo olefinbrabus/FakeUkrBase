@@ -36,7 +36,6 @@ def validate_person_categories(
     return duplicate_list_by_categories
 
 def validate_duplicate_items_in_dataset_by_column(dataset: DataFrame, column: str):
-    # создаём копию и приводим значения к строке
     df = dataset.copy()
     df[column] = df[column].astype(str)
 
@@ -51,9 +50,3 @@ def validate_duplicate_items_in_dataset_by_column(dataset: DataFrame, column: st
         "_specific_word": column,
         "duplicates": {k: v for k, v in duplicates.items()},
     }
-
-if __name__ == "__main__":
-    df = DataFrame({"numbers": [1, 1, 15], "greeb": ["asass", "sadasd", "asass"]})
-
-    print(validate_duplicate_items_in_dataset_by_column(df, "numbers"))
-    print(validate_duplicate_items_in_dataset_by_column(df, "greeb"))

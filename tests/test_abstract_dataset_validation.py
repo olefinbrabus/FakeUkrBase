@@ -21,7 +21,3 @@ def test_duplicated_fields_in_persons_validation(valid_person_dict: dict):
     assert False
 
 
-
-
-
-

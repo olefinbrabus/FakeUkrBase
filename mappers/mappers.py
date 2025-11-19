@@ -1,5 +1,6 @@
 from typing import Any
 
+from mimesis import Gender
 from pandas import Timestamp, DataFrame
 
 from core import AbstractPerson
@@ -19,11 +20,17 @@ def dict_to_person(
 
 def persons_to_dataframe(persons: list[AbstractPerson]) -> DataFrame:
     # columns = [x[1:].replace("_", " ") for x in persons[0].__dict__.keys()]
-    columns = [x.replace("_", " ") for x in persons[0].__dict__.keys()]
+    # columns = [x.replace("_", " ") for x in persons[0].__dict__.keys()]
     columns = [x for x in persons[0].__dict__.keys()]
     df = DataFrame(columns=columns)
     for i, person in enumerate(persons):
-        df.loc[i] = list(person.__dict__.values())
+        person_dict = person.__dict__
+        person_dict["credit_card"] = person.credit_card.number
+        person_dict["phone_number"] = int(person.phone_number.country_code)
+        person_dict["sex"] = "Чоловік" if person.sex == Gender.MALE else "Жінка"
+        person_dict["birthdate"] = person.birthdate.strftime("%Y-%m-%d")
+        df.loc[i] = list(person_dict.values())
+
     return df
 
 
