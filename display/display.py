@@ -6,10 +6,9 @@ from dataframes.shape_shift_dataframe import change_shape_person
 
 
 def display_df(
-        dataframe: DataFrame,
-        person_cls: type[AbstractPerson] = AbstractPerson,
-        columns_to_hide: dict = None,
-
+    dataframe: DataFrame,
+    person_cls: type[AbstractPerson] = AbstractPerson,
+    columns_to_hide: dict = None,
 ) -> None:
     if columns_to_hide:
         dataframe = change_shape_person(dataframe, person_cls, columns_to_hide)

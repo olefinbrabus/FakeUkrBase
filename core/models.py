@@ -24,12 +24,12 @@ class CreditCard(ConfigModel):
     currency: str = Field(default="USD")
     amount: Decimal = Field(default=Decimal("0.00"))
 
+
 class Job(ConfigModel):
     name: str
-    quality: QualificationType
-    address: str
+    qualification: QualificationType
+    address: str | None
     average_payment: Decimal = Field(default=Decimal("0.00"))
-
 
 
 class AbstractPerson(ConfigModel):

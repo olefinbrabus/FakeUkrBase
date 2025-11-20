@@ -12,7 +12,6 @@ fake = Faker("uk_UA")
 # person = Person(locale=Locale("en"))
 
 
-
 BASE_DIR = str(pathlib.Path(__file__).parent.absolute())
 DEFAULT_SAVE_DIR = BASE_DIR + "/" + "files" + "/"
 
@@ -23,7 +22,17 @@ UKRAINIAN_OPERATORS: dict[str, tuple] = {
     "Vodafone": (50, 66, 95, 99),
 }
 
-UKRAINE_DATA = BASE_DIR + "/" + "core" + "/" + "countries_data" + "/" + "ukraine" + "/" + "ukr-populated-places.xlsx"
+UKRAINE_DATA = (
+    BASE_DIR
+    + "/"
+    + "core"
+    + "/"
+    + "countries_data"
+    + "/"
+    + "ukraine"
+    + "/"
+    + "ukr-populated-places.xlsx"
+)
 
 SUPPORT_FORMATS = (".csv", ".xlsx", ".json", ".xml")
 

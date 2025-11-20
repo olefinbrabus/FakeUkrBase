@@ -118,10 +118,9 @@ def cli_generate_person(count: int, person: str, seed: Any) -> None:
         SESSION_FILE_DIR,
         engine="fastparquet",
         compression="snappy",
-        object_encoding="utf8"
+        object_encoding="utf8",
     )
     click.secho(f"Generated {len(persons)} people", fg="green")
-
 
 
 @click.command("read")
@@ -139,8 +138,9 @@ def cli_display_person(count: int) -> None:
         raise click.ClickException("No session found. Run 'generate' first.")
     df = pd.read_parquet(SESSION_FILE_DIR)
 
-
-    display_df(df, )
+    display_df(
+        df,
+    )
 
 
 @click.command()

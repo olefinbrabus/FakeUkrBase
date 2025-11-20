@@ -35,16 +35,12 @@ def validate_person_categories(
 
     return duplicate_list_by_categories
 
+
 def validate_duplicate_items_in_dataset_by_column(dataset: DataFrame, column: str):
     df = dataset.copy()
     df[column] = df[column].astype(str)
 
-    duplicates = (
-        df.groupby(column)
-        .filter(lambda x: len(x) > 1)
-        .groupby(column)
-        .indices
-    )
+    duplicates = df.groupby(column).filter(lambda x: len(x) > 1).groupby(column).indices
 
     return {
         "_specific_word": column,
