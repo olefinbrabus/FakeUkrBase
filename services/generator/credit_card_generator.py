@@ -4,7 +4,7 @@ from decimal import Decimal
 from pydantic_extra_types.payment import PaymentCardNumber
 
 from config import fake, base_random
-from core.countries_data.enums import ExtendedPaymentCardBrand, TypeCreditCard
+from core.enums import ExtendedPaymentCardBrand, TypeCreditCard
 from services.utils import transliterate_word
 from core.models import CreditCard
 

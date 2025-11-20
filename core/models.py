@@ -7,7 +7,9 @@ from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from pydantic_extra_types.payment import PaymentCardNumber
 
 
-from core.countries_data.enums import ExtendedPaymentCardBrand, TypeCreditCard
+from core.enums import ExtendedPaymentCardBrand, TypeCreditCard, QualificationType
+
+
 class ConfigModel(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -21,6 +23,13 @@ class CreditCard(ConfigModel):
     cvv: str = Field(pattern=r"^\d{3,4}$")
     currency: str = Field(default="USD")
     amount: Decimal = Field(default=Decimal("0.00"))
+
+class Job(ConfigModel):
+    name: str
+    quality: QualificationType
+    address: str
+    average_payment: Decimal = Field(default=Decimal("0.00"))
+
 
 
 class AbstractPerson(ConfigModel):
@@ -48,5 +57,4 @@ class AbstractEmployee(AbstractPerson):
     job_type: str
     working_address: str
     working_email_address: EmailStr
-    working_phone_number: PhoneNumber
-    working_credit_card: CreditCard
+    working_phone_number: PhoneNumber | None = None

@@ -6,7 +6,7 @@ from mimesis import Gender
 from phonenumbers import PhoneNumber
 
 from core import CreditCard
-from core.countries_data.enums import TypeCreditCard, ExtendedPaymentCardBrand
+from core.enums import TypeCreditCard, ExtendedPaymentCardBrand
 
 
 @pytest.fixture

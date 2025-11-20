@@ -29,3 +29,8 @@ class TypeCreditCard(str, Enum):
 
     def __str__(self) -> str:
         return self.value
+
+class QualificationType(str, Enum):
+    junior = "Junior"
+    middle = "Middle"
+    senior = "Senior"
