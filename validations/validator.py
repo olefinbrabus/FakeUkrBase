@@ -18,11 +18,11 @@ def validate_abstract_person(
         person_obj = dict_to_person(person_obj, person_cls)
 
     if not is_valid_luna(person_obj.credit_card.number):
-        print(f'Invalid credit card number: {person_obj.credit_card.number}')
+        print(f"Invalid credit card number: {person_obj.credit_card.number}")
         return False
 
     if not is_valid_birthdate(person_obj.birthdate):
-        print(f'Invalid birthdate: {person_obj.birthdate}')
+        print(f"Invalid birthdate: {person_obj.birthdate}")
         return False
 
     if not is_valid_ukrainian_word(
@@ -49,8 +49,7 @@ def validate_persons(
 
 
 def validate_person_dataset(
-    dataset: DataFrame,
-    person_cls: type[AbstractPerson] = AbstractPerson
+    dataset: DataFrame, person_cls: type[AbstractPerson] = AbstractPerson
 ):
     duplicate_list_by_categories = validate_person_categories(
         dataset.copy(deep=True),
@@ -63,5 +62,3 @@ def validate_person_dataset(
             print(f"in {category["_specific_word"]}")
 
         raise ValidationError("")
-
-

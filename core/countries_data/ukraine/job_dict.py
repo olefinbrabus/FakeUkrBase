@@ -1,7 +1,31 @@
 QUAL_LEVELS = {
-    "junior": 0.7,
-    "mid": 1.0,
-    "senior": 1.4,
+    "Junior": 0.7,
+    "Middle": 1.0,
+    "Senior": 1.4,
+}
+
+# средние брутто для mid-уровня в городе, в грн/мес
+SECTOR_BASE = {
+    "it": 30000,
+    "medicine": 23000,
+    "law": 26000,
+    "business": 27000,
+    "engineering": 24000,
+    "science": 22000,
+    "science_education": 18000,
+    "media": 23000,
+    "creative": 19000,
+    "transport": 22000,
+    "manual_technical": 22000,
+    "manual": 19000,
+    "industry": 23000,
+    "service": 22000,
+    "security": 21000,
+    "agriculture": 21000,
+    "sport": 22000,
+    "public": 22000,
+    "office": 24000,
+    "other": 20000,
 }
 
 JOB_FACTORS = {
@@ -591,7 +615,13 @@ JOB_FACTORS = {
         "cluster": "science_education",
         "salary_coef": 1.2,
         "popularity_coef": 1.1,
-        "allowed_locations": {"village", "urban_settlement", "city", "capital", "remote"},
+        "allowed_locations": {
+            "village",
+            "urban_settlement",
+            "city",
+            "capital",
+            "remote",
+        },
     },
     "Пекар": {
         "cluster": "service",
@@ -825,7 +855,13 @@ JOB_FACTORS = {
         "cluster": "other",
         "salary_coef": 1.3,
         "popularity_coef": 0.8,
-        "allowed_locations": {"village", "urban_settlement", "city", "capital", "remote"},
+        "allowed_locations": {
+            "village",
+            "urban_settlement",
+            "city",
+            "capital",
+            "remote",
+        },
     },
     "Футболіст": {
         "cluster": "sport",

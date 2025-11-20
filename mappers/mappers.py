@@ -51,8 +51,8 @@ def dataframe_to_persons(frame: DataFrame, person_class) -> list[AbstractPerson]
 
     return [person_class(**person) for person in valid_list_persons]
 
+
 def persons_to_employees(
     persons: list[AbstractPerson],
     show_id: bool = True,
-):
-    ...
+): ...
