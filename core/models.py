@@ -29,8 +29,18 @@ class Job(ConfigModel):
     name: str
     qualification: QualificationType
     address: str | None
-    average_payment: Decimal = Field(default=Decimal("0.00"))
 
+
+class SalaryPayment(ConfigModel):
+    month: date
+    gross_amount: Decimal
+    net_amount: Decimal | None = None
+    bonus_amount: Decimal = Field(default=Decimal("0.00"))
+    penalty_amount: Decimal = Field(default=Decimal("0.00"))
+    is_delayed: bool = False
+    delay_days: int = 0
+
+    pay_date: date | None = None
 
 class AbstractPerson(ConfigModel):
 
@@ -48,13 +58,13 @@ class AbstractPerson(ConfigModel):
     phone_number: PhoneNumber
     credit_card: CreditCard
     # future features for better analyse
-    # salary: float = None
     # amount_of_violation: int = None
 
 
 class AbstractEmployee(AbstractPerson):
 
-    job_type: str
-    working_address: str
-    working_email_address: EmailStr
+    job: Job
+    length_of_work: int
+    working_email_address: EmailStr | None = None
     working_phone_number: PhoneNumber | None = None
+    contract_payment: Decimal = Field(default=Decimal("0.00"))
