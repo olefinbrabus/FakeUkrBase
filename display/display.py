@@ -10,7 +10,7 @@ def display_df(
     person_cls: type[AbstractPerson] = AbstractPerson,
     columns_to_hide: dict = None,
 ) -> None:
-    if columns_to_hide:
-        dataframe = change_shape_person(dataframe, person_cls, columns_to_hide)
+    # if columns_to_hide:
+    dataframe = change_shape_person(dataframe, person_cls, columns_to_hide or {})
     # print(tabulate(dataframe, headers=dataframe.keys()))
     prettify(dataframe, row_limit=50, col_limit=15)

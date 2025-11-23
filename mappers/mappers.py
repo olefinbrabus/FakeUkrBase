@@ -28,7 +28,6 @@ def persons_to_dataframe(persons: list[AbstractPerson]) -> DataFrame:
 
     rows: list = []
 
-
     for i, person in enumerate(persons):
         person_dict = person.model_dump()
         person_dict["credit_card"] = person.credit_card.number
@@ -48,6 +47,7 @@ def persons_to_dataframe(persons: list[AbstractPerson]) -> DataFrame:
         rows.append(person_dict)
 
     return DataFrame(rows)
+
 
 # def abstract_persons_to_hashable(persons: list[AbstractPerson]) -> dict:
 

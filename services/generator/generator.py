@@ -20,11 +20,11 @@ def make_employee(abstract_person: AbstractPerson) -> AbstractEmployee:
     job = create_job(abstract_person.address, abstract_person.type_populated_area)
     length_of_work = generate_length_of_work(abstract_person.birthdate)
     contract_payment = calculate_contract_payment(
-            populate_area_type=abstract_person.type_populated_area,
-            qualification=job.qualification,
-            job_name=job.name,
-            employee_stage=length_of_work,
-        )
+        populate_area_type=abstract_person.type_populated_area,
+        qualification=job.qualification,
+        job_name=job.name,
+        employee_stage=length_of_work,
+    )
     # print(contract_payment)
 
     return AbstractEmployee(
@@ -90,6 +90,7 @@ def generate_persons(count: int, person_cls: type[AbstractPerson] = AbstractPers
         bar.next()
     bar.finish()
     return persons_list
+
 
 if __name__ == "__main__":
     print(generate_persons(count=5, person_cls=AbstractEmployee))
