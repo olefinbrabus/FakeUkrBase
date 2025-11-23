@@ -39,18 +39,19 @@ def generate_salary_payments_for_year(
         month_date = date(year, month, 1)
         base_amount = base_monthly
 
-
         bonus_amount = Decimal("0.00")
         if base_random.random() < cfg.bonus_prob:
             share = _sample_share(cfg.bonus_share_mean, cfg.bonus_share_std)
-            bonus_amount = (base_amount * Decimal(str(share))).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-
+            bonus_amount = (base_amount * Decimal(str(share))).quantize(
+                Decimal("0.01"), rounding=ROUND_HALF_UP
+            )
 
         penalty_amount = Decimal("0.00")
         if base_random.random() < cfg.penalty_prob:
             share = _sample_share(cfg.penalty_share_mean, cfg.penalty_share_std)
-            penalty_amount = (base_amount * Decimal(str(share))).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-
+            penalty_amount = (base_amount * Decimal(str(share))).quantize(
+                Decimal("0.01"), rounding=ROUND_HALF_UP
+            )
 
         is_delayed = base_random.random() < cfg.delay_prob
         delay_days = 0

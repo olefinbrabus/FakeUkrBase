@@ -42,6 +42,7 @@ class SalaryPayment(ConfigModel):
 
     pay_date: date | None = None
 
+
 class AbstractPerson(ConfigModel):
 
     id: int

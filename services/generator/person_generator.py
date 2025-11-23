@@ -26,4 +26,3 @@ def generate_birthdate():
     end_time = datetime.strptime("2005-12-31", "%Y-%m-%d")
     rand_data = fake.date(end_datetime=end_time)
     return datetime.strptime(rand_data, "%Y-%m-%d")
-

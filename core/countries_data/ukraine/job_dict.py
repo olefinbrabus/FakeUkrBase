@@ -146,7 +146,7 @@ JOB_FACTORS = {
         "cluster": "medicine",
         "salary_coef": 1.5,
         "popularity_coef": 0.7,
-        "allowed_locations": {"village", "urban_settlement", "city"},
+        "allowed_locations": { "urban_settlement", "city"},
     },
     "Випробувач": {
         "cluster": "engineering",
