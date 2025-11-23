@@ -14,16 +14,43 @@ TYPE_MAP = {
     "Київ": "capital",
 }
 
+class PopulatedAreaFrameManager:
+    _instance = None
+    _frame = None
 
-def create_address():
-    places_dataframe: pd.DataFrame
 
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        if not hasattr(self, '_initialized'):
+            self._initialized = True
+
+    @property
+    def frame(self):
+        if self._frame is None:
+            self._frame = read_ukrainian_populated_areas()
+        return self._frame
+
+
+
+def read_ukrainian_populated_areas():
     try:
         places_dataframe = pd.read_excel(UKRAINE_DATA, sheet_name="Populated Places")
     except FileNotFoundError:
         click.echo("you have to install the ukr-populated-places.xlsx")
         raise
+    return places_dataframe
 
+
+
+
+
+def create_address():
+    frame_manager = PopulatedAreaFrameManager()
+    places_dataframe: pd.DataFrame = frame_manager.frame
     # places_dataframe["populated_areas_category"] = places_dataframe["TYPE_UK"].apply(normalize_populated_areas_by_type)
     populate_area = places_dataframe.sample(
         n=1, random_state=base_random.randint(1, 1000)
@@ -40,4 +67,5 @@ def normalize_populated_areas_by_type(raw_string: str):
 
 
 if __name__ == "__main__":
-    print(create_address())
+    for _ in range(10):
+        print(create_address())

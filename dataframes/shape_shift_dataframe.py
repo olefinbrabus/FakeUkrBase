@@ -44,3 +44,4 @@ def change_shape_abstract_person(
     return dataframe.drop(
         columns=[k for k, v in dict_to_exclude_fields.items() if v], axis=1
     )
+

@@ -27,6 +27,3 @@ def generate_birthdate():
     rand_data = fake.date(end_datetime=end_time)
     return datetime.strptime(rand_data, "%Y-%m-%d")
 
-
-def generate_address():
-    return fake.address()

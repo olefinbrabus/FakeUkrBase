@@ -4,7 +4,6 @@ QUAL_LEVELS = {
     "Senior": 1.4,
 }
 
-# средние брутто для mid-уровня в городе, в грн/мес
 SECTOR_BASE = {
     "it": 30000,
     "medicine": 23000,

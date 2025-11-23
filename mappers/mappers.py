@@ -3,7 +3,7 @@ from typing import Any
 from mimesis import Gender
 from pandas import Timestamp, DataFrame
 
-from core import AbstractPerson
+from core import AbstractPerson, AbstractEmployee
 
 
 def dict_to_person(
@@ -21,17 +21,35 @@ def dict_to_person(
 def persons_to_dataframe(persons: list[AbstractPerson]) -> DataFrame:
     # columns = [x[1:].replace("_", " ") for x in persons[0].__dict__.keys()]
     # columns = [x.replace("_", " ") for x in persons[0].__dict__.keys()]
-    columns = [x for x in persons[0].__dict__.keys()]
-    df = DataFrame(columns=columns)
+    # columns = [x for x in persons[0].__dict__.keys()]
+    # df = DataFrame(columns=columns)
+    # if type(persons[0]) is AbstractEmployee:
+    #     df = df.assign(job_name=[], job_qualification=[], job_address=[])
+
+    rows: list = []
+
+
     for i, person in enumerate(persons):
-        person_dict = person.__dict__
+        person_dict = person.model_dump()
         person_dict["credit_card"] = person.credit_card.number
         person_dict["phone_number"] = int(person.phone_number.country_code)
         person_dict["sex"] = "Чоловік" if person.sex == Gender.MALE else "Жінка"
         person_dict["birthdate"] = person.birthdate.strftime("%Y-%m-%d")
-        df.loc[i] = list(person_dict.values())
 
-    return df
+        if type(person) is AbstractEmployee:
+            person_dict["contract_payment"] = float(person.contract_payment)
+
+            job = person_dict.pop("job")
+            person_dict["job_name"] = job["name"]
+            person_dict["job_qualification"] = job["qualification"]
+            person_dict["job_address"] = job["address"]
+        # df.loc[i] = list(person_dict.values())
+
+        rows.append(person_dict)
+
+    return DataFrame(rows)
+
+# def abstract_persons_to_hashable(persons: list[AbstractPerson]) -> dict:
 
 
 def dataframe_to_persons(frame: DataFrame, person_class) -> list[AbstractPerson]:

@@ -25,7 +25,7 @@ def variation() -> float:
     return max(0.7, min(1.4, x))
 
 
-def calculate_average_payment(
+def calculate_contract_payment(
     job_name: str,
     qualification: QualificationType,
     populate_area_type: str,
@@ -51,7 +51,7 @@ def calculate_average_payment(
 if __name__ == "__main__":
     [
         print(
-            calculate_average_payment(
+            calculate_contract_payment(
                 populate_area_type="village",
                 qualification=QualificationType.junior,
                 job_name="Програміст",
