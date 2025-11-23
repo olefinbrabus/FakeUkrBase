@@ -4,7 +4,7 @@ from datetime import date, datetime
 
 def is_valid_ukrainian_word(*words) -> bool:
     for word in words:
-        if not bool(re.match(r"^[а-яА-ЯЇїІіЄєҐґʼ\s]+$", word)):
+        if not bool(re.match(r"^[-а-яА-ЯЇїІіЄєҐґʼ\s]+$", word)):
             return False
     return True
 

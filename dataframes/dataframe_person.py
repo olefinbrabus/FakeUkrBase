@@ -1,7 +1,4 @@
-from typing import Any
-
 import pandas as pd
-from pandas import Timestamp
 from tabulate import tabulate
 
 from core import AbstractPerson

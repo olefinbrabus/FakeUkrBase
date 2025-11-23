@@ -54,6 +54,8 @@ class AbstractPerson(ConfigModel):
     second_name_eng_lang: str
     email_address: EmailStr
     address: str
+    address_eng_lang: str
+    type_populated_area: str
     birthdate: date
     phone_number: PhoneNumber
     credit_card: CreditCard

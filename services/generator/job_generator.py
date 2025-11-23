@@ -2,7 +2,6 @@ from config import base_random
 from core.countries_data.ukraine.job_dict import JOB_FACTORS
 from core.enums import QualificationType
 from core.models import Job
-from services.generator.contract_salary_generator import calculate_average_payment
 
 
 def create_job(populate_area_name, populate_area_type):

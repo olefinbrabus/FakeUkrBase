@@ -14,7 +14,7 @@ def _clamp(x: float, min_v: float, max_v: float) -> float:
 
 def _sample_share(mean: float, std: float) -> float:
     val = base_random.normalvariate(mean, std)
-    return _clamp(val, 0.0, mean * 3)  # жесткий отсек, чтобы не было бреда
+    return _clamp(val, 0.0, mean * 3)
 
 
 def generate_salary_payments_for_year(
