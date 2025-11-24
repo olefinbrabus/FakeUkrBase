@@ -6,11 +6,13 @@ from dataframes.shape_shift_dataframe import change_shape_person
 
 
 def display_df(
-    dataframe: DataFrame,
+    person_dataframe: DataFrame,
+    salary_dataframe: DataFrame,
     person_cls: type[AbstractPerson] = AbstractPerson,
     columns_to_hide: dict = None,
 ) -> None:
     # if columns_to_hide:
-    dataframe = change_shape_person(dataframe, person_cls, columns_to_hide or {})
+    person_dataframe = change_shape_person(person_dataframe, person_cls, columns_to_hide or {})
     # print(tabulate(dataframe, headers=dataframe.keys()))
-    prettify(dataframe, row_limit=50, col_limit=15)
+    prettify(person_dataframe, row_limit=50, col_limit=15)
+    prettify(salary_dataframe, row_limit=50, col_limit=15)

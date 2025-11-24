@@ -19,7 +19,7 @@ def _sample_share(mean: float, std: float) -> float:
 
 def generate_salary_payments_for_year(
     employee: AbstractEmployee,
-    year: int,
+    year: int = date.today().year,
 ) -> list[SalaryPayment]:
     job_name = employee.job.name
     job_data = JOB_FACTORS.get(job_name)

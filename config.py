@@ -36,4 +36,5 @@ UKRAINE_DATA = (
 
 SUPPORT_FORMATS = (".csv", ".xlsx", ".json", ".xml")
 
-SESSION_FILE_DIR = os.path.join(tempfile.gettempdir(), "fakeukrbase_session.parquet")
+SESSION_PERSON_FILE_DIR = os.path.join(tempfile.gettempdir(), "fakeukrbase_person_session.parquet")
+SESSION_SALARY_FILE_DIR = os.path.join(tempfile.gettempdir(), "fakeukrbase_salary_session.parquet")
