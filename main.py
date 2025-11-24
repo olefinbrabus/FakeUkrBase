@@ -8,8 +8,10 @@ import pandas as pd
 from click import Path as ClickPath
 from pathlib import Path
 
+from tabulate import tabulate
+
 # from .argv_parser import execute_symbols
-from config import fake, base_random, DEFAULT_SAVE_DIR, SESSION_FILE_DIR
+from config import fake, base_random, DEFAULT_SAVE_DIR, SESSION_PERSON_FILE_DIR, SESSION_SALARY_FILE_DIR
 from dataframes.dataframe_person import PersonDataFrameManager
 
 # from files_manager import read_file, save_file
@@ -19,6 +21,7 @@ from core import AbstractPerson, AbstractEmployee
 from display.display import display_df
 from exceptions import ConflictDataTakenException
 from core.persons_generatorOld import generate_person_data
+from mappers.salary_mappers import salary_to_dataframe
 from services.generator.generator import generate_persons
 from validations.validator import validate_persons
 
@@ -109,13 +112,22 @@ def cli_generate_person(count: int, person: str, seed: Any) -> None:
 
     cli_set_seed(seed)
 
-    persons: list[AbstractPerson] = generate_persons(count, person_class)
+    persons, salary_list = generate_persons(count, person_class)
     validate_persons(persons, person_class)
 
-    pdfm = PersonDataFrameManager(persons, person_class)
+    person_dataframe_manager = PersonDataFrameManager(persons, person_class)
 
-    pdfm.dataframe.to_parquet(
-        SESSION_FILE_DIR,
+    salary_frame = salary_to_dataframe(salary_list)
+
+    person_dataframe_manager.dataframe.to_parquet(
+        SESSION_PERSON_FILE_DIR,
+        engine="fastparquet",
+        compression="snappy",
+        object_encoding="utf8",
+    )
+
+    salary_frame.to_parquet(
+        SESSION_SALARY_FILE_DIR,
         engine="fastparquet",
         compression="snappy",
         object_encoding="utf8",
@@ -131,21 +143,24 @@ def cli_read_persons(read):
 
 @click.command("display")
 @click.option("--count", "-c", default=10, type=int, help="Display of amount of people")
-def cli_display_person(count: int) -> None:
+@click.option("--salary", "-s",  is_flag=True, help="Display salary of persons")
+def cli_display_person(count: int, salary) -> None:
     if count < 1:
         raise ValueError("Display must be greater than 0")
-    if not os.path.exists(SESSION_FILE_DIR):
+    if not os.path.exists(SESSION_PERSON_FILE_DIR):
         raise click.ClickException("No session found. Run 'generate' first.")
-    df = pd.read_parquet(SESSION_FILE_DIR)
+    person_df = pd.read_parquet(SESSION_PERSON_FILE_DIR)
+    salary_df = pd.read_parquet(SESSION_SALARY_FILE_DIR)
+
 
     display_df(
-        df,
+        person_df, salary_df
     )
 
 
-@click.command()
+@click.command("save")
 @click.option(
-    "--save",
+    "--test",
     default=DEFAULT_SAVE_DIR,
     type=ClickPath(exists=False, path_type=Path),
     help="Save path",
