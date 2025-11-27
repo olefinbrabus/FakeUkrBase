@@ -6,6 +6,7 @@ import pandas as pd
 
 # from .argv_parser import execute_symbols
 from config import fake, base_random, SESSION_PERSON_FILE_DIR, SESSION_SALARY_FILE_DIR
+
 # from user import AbstractPerson, Employee
 from core import AbstractPerson, AbstractEmployee
 from core.persons_generatorOld import generate_person_data
@@ -122,7 +123,9 @@ def cli_generate_person(count: int, person: str, seed: Any) -> None:
     )
 
     if salary_list is not None:
-        salary_frame = salaries_to_dataframe(all_persons_salaries_list=salary_list, employees=persons)
+        salary_frame = salaries_to_dataframe(
+            all_persons_salaries_list=salary_list, employees=persons
+        )
 
         salary_frame.to_parquet(
             SESSION_SALARY_FILE_DIR,
@@ -141,7 +144,7 @@ def cli_read_persons(read):
 
 @click.command("display")
 @click.option("--count", "-c", default=10, type=int, help="Display of amount of people")
-@click.option("--salary", "-s",  is_flag=True, help="Display salary of persons")
+@click.option("--salary", "-s", is_flag=True, help="Display salary of persons")
 def cli_display_person(count: int, salary) -> None:
     if count < 1:
         raise ValueError("Display must be greater than 0")
@@ -150,10 +153,7 @@ def cli_display_person(count: int, salary) -> None:
     person_df = pd.read_parquet(SESSION_PERSON_FILE_DIR)
     salary_df = pd.read_parquet(SESSION_SALARY_FILE_DIR)
 
-
-    display_df(
-        person_df, salary_df
-    )
+    display_df(person_df, salary_df)
 
 
 @click.command("save")
@@ -166,6 +166,7 @@ def cli_display_person(count: int, salary) -> None:
 def cli_save_file():
     from services.db.session import Base, engine
     from services.db import models  # noqa: F401
+
     Base.metadata.create_all(bind=engine)
 
     person_df = pd.read_parquet(SESSION_PERSON_FILE_DIR)

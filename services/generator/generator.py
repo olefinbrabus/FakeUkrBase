@@ -18,7 +18,9 @@ from services.generator.salary_generator import generate_salary_payments_for_yea
 from services.utils import transliterate_word
 
 
-def make_employee(abstract_person: AbstractPerson) -> tuple[AbstractEmployee, list[SalaryPayment]]:
+def make_employee(
+    abstract_person: AbstractPerson,
+) -> tuple[AbstractEmployee, list[SalaryPayment]]:
     job = create_job(abstract_person.address, abstract_person.type_populated_area)
     length_of_work = generate_length_of_work(abstract_person.birthdate)
     contract_payment = calculate_contract_payment(
@@ -29,9 +31,7 @@ def make_employee(abstract_person: AbstractPerson) -> tuple[AbstractEmployee, li
     )
     # print(contract_payment)
 
-
-
-    employee =  AbstractEmployee(
+    employee = AbstractEmployee(
         job=job,
         length_of_work=length_of_work,
         contract_payment=contract_payment,

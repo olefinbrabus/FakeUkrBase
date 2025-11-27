@@ -26,6 +26,7 @@ from core.models import SalaryPayment, AbstractEmployee
 #
 #     return pd.DataFrame(rows)
 
+
 def salaries_to_dataframe(
     employees: list[AbstractEmployee],
     all_persons_salaries_list: list[list[SalaryPayment]],

@@ -34,9 +34,7 @@ def read_ukrainian_populated_areas() -> pd.DataFrame:
         raise
 
     places_dataframe["category"] = (
-        places_dataframe["TYPE_UK"]
-        .astype(str)
-        .apply(normalize_populated_areas_by_type)
+        places_dataframe["TYPE_UK"].astype(str).apply(normalize_populated_areas_by_type)
     )
 
     places_dataframe = places_dataframe[places_dataframe["category"] != "unknown"]
@@ -58,9 +56,9 @@ class PopulatedAreaFrameManager:
             self._frame: pd.DataFrame = read_ukrainian_populated_areas()
             self._frames_by_category: dict[str, pd.DataFrame] = {}
             for cat in self._frame["category"].unique():
-                self._frames_by_category[cat] = (
-                    self._frame[self._frame["category"] == cat].reset_index(drop=True)
-                )
+                self._frames_by_category[cat] = self._frame[
+                    self._frame["category"] == cat
+                ].reset_index(drop=True)
             self._initialized = True
 
     @property
