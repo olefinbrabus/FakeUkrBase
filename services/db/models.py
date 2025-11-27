@@ -1,5 +1,13 @@
 from sqlalchemy import (
-    Column, BigInteger, Integer, String, Boolean, Date, Numeric, ForeignKey, UniqueConstraint
+    Column,
+    BigInteger,
+    Integer,
+    String,
+    Boolean,
+    Date,
+    Numeric,
+    ForeignKey,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
 
@@ -35,7 +43,9 @@ class EmployeeDB(Base):
 
     contract_payment = Column(Numeric, nullable=False)
 
-    salaries = relationship("SalaryDB", back_populates="employee", cascade="all, delete-orphan")
+    salaries = relationship(
+        "SalaryDB", back_populates="employee", cascade="all, delete-orphan"
+    )
 
 
 class JobDB(Base):
@@ -58,8 +68,12 @@ class SalaryDB(Base):
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
 
-    employee_id = Column(BigInteger, ForeignKey("employees.id", ondelete="CASCADE"), nullable=False)
-    job_id = Column(BigInteger, ForeignKey("jobs.id", ondelete="RESTRICT"), nullable=False)
+    employee_id = Column(
+        BigInteger, ForeignKey("employees.id", ondelete="CASCADE"), nullable=False
+    )
+    job_id = Column(
+        BigInteger, ForeignKey("jobs.id", ondelete="RESTRICT"), nullable=False
+    )
 
     month = Column(Date, nullable=False)
     gross_amount = Column(Numeric(14, 2), nullable=False)

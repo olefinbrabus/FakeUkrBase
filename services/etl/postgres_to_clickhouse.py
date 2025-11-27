@@ -42,7 +42,6 @@ def load_config() -> DBConfig:
         pg_db=os.getenv("POSTGRES_DB", "fakeukrbase"),
         pg_user=os.getenv("POSTGRES_USER", "fakeukrbase"),
         pg_password=os.getenv("POSTGRES_PASSWORD", "fakeukrbase"),
-
         ch_host=os.getenv("CLICKHOUSE_HOST", "localhost"),
         ch_port=int(os.getenv("CLICKHOUSE_PORT", "9000")),
         ch_db=os.getenv("CLICKHOUSE_DB", "fakeukrbase"),

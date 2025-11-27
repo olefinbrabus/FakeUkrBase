@@ -1,37 +1,88 @@
 # FakeUkrBase
 
-## General information
+Synthetic Ukrainian employee dataset generator with database storage, OLAP pipeline, and BI analytics support.
 
-This console application is designed to generate random information that can be used for data analytics or for database load testing.
+---
 
-### install the application via GitHub
-```bash 
-git clone https://github.com/olefinbrabus/FakeUkrBase
-cd FakeUkrBase
-python -m venv venv
-pip install requirements.txt
-```
-
-### example options in app
-- in the "files" folder in the application directory
-```bash
-python main.py --generate 1 --save .csv  # automatically generates a name in the format "Year-Month-Day Hours:Minute:Second uuid4" 
-python main.py --generate 4 --save test_file.xml --display
-```
-- in other folder(only absolute path)
-```bash
-python main.py --generate 1000 --seed 5 --save /Users/user/Download/my_employee.xlsx
-```
 ## Features
 
-### complete
-- generate fictional person with ukrainian full name, birthdate, phone number, address, email
-- save any person type in various folder ways and formats(json, xml, xlsx, csv)
-- tabulation display persons
-- seed
-### in process
-- read files
-- documentation and --help options
-- various diagram for analytics
-- employee with more data
-- fastAPI fork
+- Generate realistic synthetic Ukrainian personal & employment data  
+- Salary simulation (delays, bonuses, penalties included)  
+- Export to **Parquet / CSV / XLSX**
+- PostgreSQL relational storage with **Alembic migrations**
+- ETL → ClickHouse for OLAP analytics  
+- BI dashboards via Metabase  
+
+---
+
+## Installation
+
+```bash
+git clone https://github.com/olefinbrabus/FakeUkrBase
+cd FakeUkrBase
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Copy environment config:
+```bash
+cp .env.example .env
+
+```
+Edit .env to match your local setup.
+
+---
+
+## Run Infrastructure
+
+Requires Docker.
+```bash
+docker compose up -d
+```
+
+Apply DB migrations:
+
+```bash
+alembic upgrade head
+```
+
+## Usage Examples
+
+Generate employees
+```bash```
+```bash```
+```bash
+python main.py generate --count 100 -p abstractemployee --seed 42
+```
+
+Save generated data into PostgreSQL
+
+```bash
+python main.py save
+```
+
+Build OLAP layer in ClickHouse
+
+```bash
+python main.py olap --full
+```
+
+## Data Model
+
+| Layer       | 	Storage	    | Tables                             |
+|-------------|--------------|------------------------------------| 
+| Source data | 	PostgreSQL	 | employees, jobs, salaries          |
+| Analytics   | ClickHouse   | dim_employee, dim_job, salary_fact |
+
+
+---
+
+## BI Dashboard Ideas
+
+Some insights possible after ETL:
+- Salary distribution by qualification level
+- Payroll anomalies (late payments, penalty patterns)
+- Compensation comparison across settlements
+- Yearly payroll change tracking
+- Employee churn vs salary dynamics (future roadmap)
+

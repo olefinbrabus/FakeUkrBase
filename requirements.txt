@@ -18,3 +18,10 @@ openpyxl
 pydantic-extra-types
 luhncheck
 progress
+psycopg2-binary
+clickhouse-driver
+clickhouse-driver
+pytest
+sqlalchemy
+alembic
+mimesis

@@ -18,31 +18,33 @@ def save_frames_to_db(persons_df: pd.DataFrame, salary_df: pd.DataFrame) -> None
 
             db_emp = EmployeeDB(
                 sex=row.get("sex"),
-
                 first_name=row.get("first_name"),
                 middle_name=row.get("middle_name"),
                 second_name=row.get("second_name"),
-
                 first_name_en=row.get("first_name_eng_lang"),
                 middle_name_en=row.get("middle_name_eng_lang"),
                 second_name_en=row.get("second_name_eng_lang"),
-
                 email=row.get("email_address"),
                 address_uk=row.get("address"),
                 address_en=row.get("address_eng_lang"),
                 populated_type=row.get("type_populated_area"),
-
                 contract_payment=row.get("contract_payment"),
-
-                birthdate=pd.to_datetime(row["birthdate"]).date()
-                if "birthdate" in row and pd.notna(row["birthdate"])
-                else None,
-
-                phone_number=str(row.get("phone_number")) if row.get("phone_number") is not None else None,
-
+                birthdate=(
+                    pd.to_datetime(row["birthdate"]).date()
+                    if "birthdate" in row and pd.notna(row["birthdate"])
+                    else None
+                ),
+                phone_number=(
+                    str(row.get("phone_number"))
+                    if row.get("phone_number") is not None
+                    else None
+                ),
                 working_email=row.get("working_email_address"),
-                working_phone=str(row.get("working_phone_number"))
-                if row.get("working_phone_number") is not None else None,
+                working_phone=(
+                    str(row.get("working_phone_number"))
+                    if row.get("working_phone_number") is not None
+                    else None
+                ),
             )
             session.add(db_emp)
             session.flush()
@@ -51,7 +53,9 @@ def save_frames_to_db(persons_df: pd.DataFrame, salary_df: pd.DataFrame) -> None
 
         session.commit()
 
-        def get_or_create_job(name: str, qualification: str, address: str | None) -> JobDB:
+        def get_or_create_job(
+            name: str, qualification: str, address: str | None
+        ) -> JobDB:
             key = (name, qualification, address)
             if key in job_cache:
                 return job_cache[key]
@@ -73,7 +77,6 @@ def save_frames_to_db(persons_df: pd.DataFrame, salary_df: pd.DataFrame) -> None
 
             job_cache[key] = job
             return job
-
 
         for _, row in salary_df.iterrows():
             generated_id = int(row["person_id"])

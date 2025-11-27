@@ -5,6 +5,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 load_dotenv()
 
 import os
+
 POSTGRES_USER = os.getenv("POSTGRES_USER", "fakeukrbase")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "fakeukrbase")
 POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
