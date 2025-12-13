@@ -21,7 +21,9 @@ def valid_person_dict() -> dict:
         "second_name": "Пелех",
         "second_name_eng_lang": "Pelekh",
         "email_address": "Pelekh.Serhij66@gmail.com",
-        "address": "площа Костанді, буд. 182, Вишгород, 85979",
+        "address": "Вишгород",
+        "address_eng_lang": "Vyshgorod",
+        "type_populated_area": "City",
         "birthdate": datetime.date(1982, 12, 10),
         "phone_number": PhoneNumber(country_code=380945670584),
         "credit_card": CreditCard(
@@ -40,10 +42,10 @@ def valid_person_dict() -> dict:
 
 
 @pytest.fixture
-def invalid_person_dict() -> dict:
+def invalid_person_dict_for_validator() -> dict:
     return {
-        "id": 1,
-        "sex": Gender.FEMALE,
+        "id": -1,
+        "sex": Gender.MALE,
         "first_name": "Сер1231237гій",
         "first_name_eng_lang": "Serh1123ij",
         "middle_name": "Свя1232тославович",
@@ -52,6 +54,8 @@ def invalid_person_dict() -> dict:
         "second_name_eng_lang": "Pelekhdsad1235",
         "email_address": "Pelekh.Serhij6666666663475435743785356478@gmail.com",
         "address": "площа Костанді, буд. 182, Вишгород, 85979",
+        "address_eng_lang": "Vyshgorod",
+        "type_populated_area": "City",
         "birthdate": datetime.date(1876, 12, 10),
         "phone_number": PhoneNumber(country_code=380945670584012312),
         "credit_card": CreditCard(
@@ -66,4 +70,24 @@ def invalid_person_dict() -> dict:
                 "amount": Decimal("-1.25"),
             }
         ),
+    }
+
+@pytest.fixture
+def invalid_person_dict_for_pydantic() -> dict:
+    return {
+        "id": "adad",
+        "sex": "no",
+        "first_name": 22,
+        "first_name_eng_lang": ("Serh1123ij", "4414"),
+        "middle_name": {},
+        "middle_name_eng_lang": [1, 2, 3],
+        "second_name": True,
+        "second_name_eng_lang": False,
+        "email_address": 5/2,
+        "address": 100_000_000,
+        "address_eng_lang": 5**2,
+        "type_populated_area": 43,
+        "birthdate": 29328.13,
+        "phone_number": 380945670584012312,
+        "credit_card": True
     }
