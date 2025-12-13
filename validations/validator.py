@@ -17,6 +17,10 @@ def validate_abstract_person(
     if isinstance(person_obj, dict):
         person_obj = dict_to_person(person_obj, person_cls)
 
+    if person_obj.id < 0:
+        print(f"Invalid id: {person_obj.id}")
+        return False
+
     if not is_valid_luna(person_obj.credit_card.number):
         print(f"Invalid credit card number: {person_obj.credit_card.number}")
         return False
