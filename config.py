@@ -1,6 +1,6 @@
 import os
-import random
 import pathlib
+import random
 import tempfile
 
 from faker import Faker
@@ -42,3 +42,7 @@ SESSION_PERSON_FILE_DIR = os.path.join(
 SESSION_SALARY_FILE_DIR = os.path.join(
     tempfile.gettempdir(), "fakeukrbase_salary_session.parquet"
 )
+
+
+
+

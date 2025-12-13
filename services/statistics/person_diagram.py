@@ -32,9 +32,9 @@ def phone_diagram(person_df: PersonDataFrameManager):
     plt.show()
 
 
-def first_name_diagram(person_df: PersonDataFrameManager):
-    plt.style.use("classic")
-    plt.title("Статистика імен")
-    first_names = [
-        str(first_name).split(" ")[0] for first_name in person_df.dataframe["full name"]
-    ]
+# def first_name_diagram(person_df: PersonDataFrameManager):
+#     plt.style.use("classic")
+#     plt.title("Статистика імен")
+#     first_names = [
+#         str(first_name).split(" ")[0] for first_name in person_df.dataframe["full name"]
+#     ]

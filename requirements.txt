@@ -25,3 +25,5 @@ pytest
 sqlalchemy
 alembic
 mimesis
+seaborn
+statsmodels

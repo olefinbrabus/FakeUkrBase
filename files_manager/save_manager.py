@@ -1,10 +1,13 @@
 import pandas as pd
+
+from config import SESSION_PERSON_FILE_DIR, SESSION_SALARY_FILE_DIR, DEFAULT_SAVE_DIR
 from dataframes.dataframe_person import PersonDataFrameManager
 from openpyxl import load_workbook
 
 from files_manager.path_manager import write_save_path
 
 
+# def save_file(frame: PersonDataFrameManager, various_path_type):
 def save_file(frame: PersonDataFrameManager, various_path_type):
     complete_path, file_type = write_save_path(various_path_type)
 
@@ -20,9 +23,11 @@ def save_file(frame: PersonDataFrameManager, various_path_type):
     write_manager(frame=frame, complete_path=complete_path)
 
 
-def excel_write_manager(frame: PersonDataFrameManager, complete_path: str):
+# def excel_write_manager(frame: PersonDataFrameManager, complete_path: str):
+def excel_write_manager(frame, complete_path: str):
     with pd.ExcelWriter(complete_path) as writer:
-        frame.dataframe.to_excel(writer, sheet_name="Persons", index=False)
+        frame.to_excel(writer, sheet_name="Persons", index=False)
+        # frame.dataframe.to_excel(writer, sheet_name="Persons", index=False)
 
     wb = load_workbook(complete_path)
     ws = wb.active

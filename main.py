@@ -4,79 +4,21 @@ from typing import Any
 import click
 import pandas as pd
 
-# from .argv_parser import execute_symbols
 from config import fake, base_random, SESSION_PERSON_FILE_DIR, SESSION_SALARY_FILE_DIR
-
-# from user import AbstractPerson, Employee
 from core import AbstractPerson, AbstractEmployee
-from core.persons_generatorOld import generate_person_data
 from dataframes.dataframe_person import PersonDataFrameManager
 from display.display import display_df
-from exceptions import ConflictDataTakenException
 from mappers.salary_mappers import salaries_to_dataframe
 from services.db.save import save_frames_to_db
 from services.etl.postgres_to_clickhouse import run_etl
 from services.generator.generator import generate_persons
+from services.statistics.analytics_methods import run_statistics
 from validations.validator import validate_persons
-
-
-# import ctypes
-# from files_manager import read_file, save_file
 
 
 @click.group()
 def cli():
     pass
-
-
-def check_argv(argv: list[str]):
-    argv: list[str] = argv[1:]
-    frame = None
-    seed = None
-    person: AbstractPerson.__class__ = AbstractPerson
-
-    if "--person" in argv:
-        pass
-        # person_number = execute_symbols(argv, "--person", 0, True)
-        # person = set_person(person_number)
-
-    if "--generate" in argv and "--read" in argv:
-        raise ConflictDataTakenException("--read", "--generate")
-
-    if "--seed" in argv:
-        pass
-        # seed = execute_symbols(argv, "--seed", 1, False)
-
-    cli_set_seed(seed)
-
-    if "--generate" in argv or len(argv) == 0:
-        pass
-        # persons_count = execute_symbols(argv, "--generate", 10)
-        # frame = frame_by_generate_word_in_argv(persons_count, person)
-
-    if "--read" in argv:
-        pass
-        # complete_path = execute_symbols(argv, "--read", None)
-        # frame = PersonDataFrameManager(read_file(complete_path), person)
-
-    if "--display" in argv or len(argv) == 0:
-        pass
-        # frame.display()
-
-    if "--save" in argv:
-        if frame is None:
-            raise Exception("Frame has undefined")
-        # complete_path: str = execute_symbols(argv, "--save", "default", False)
-        # save_file(frame, complete_path)
-
-
-def frame_by_generate_word_in_argv(
-    persons_count: int, person_cls
-) -> PersonDataFrameManager:
-    persons = generate_person_data(person_cls, persons_count)
-
-    frame = PersonDataFrameManager(persons, person_cls)
-    return frame
 
 
 def cli_set_seed(seed: Any) -> None:
@@ -183,13 +125,39 @@ def cli_olap(full: bool) -> None:
     click.secho("OLAP Load Completed", fg="green")
 
 
-# cli.add_command(cli_set_seed)
-# cli.add_command(cli_set_person)
+@click.command("statistics")
+@click.option(
+    "--method",
+    "-m",
+    type=click.Choice(
+        ["descriptive", "correlation", "regression", "timeseries", "clustering", "anomaly", "all"],
+        case_sensitive=False,
+    ),
+    default="all",
+    show_default=True,
+    help="Який метод аналітики виконати.",
+)
+@click.option(
+    "--no-plots",
+    is_flag=True,
+    default=False,
+    help="Не показувати діаграми, лише текстовий звіт.",
+)
+def cli_statistics(method:str, no_plots: bool) -> None:
+    results, report_text = run_statistics(
+        method=method.lower(),
+        show_plots_flag=not no_plots,
+    )
+
+    click.secho("Аналітичний звіт:", fg="cyan")
+    click.echo(report_text)
+
 cli.add_command(cli_generate_person)
 cli.add_command(cli_read_persons)
 cli.add_command(cli_display_person)
 cli.add_command(cli_save_file)
 cli.add_command(cli_olap)
+cli.add_command(cli_statistics)
 
 if __name__ == "__main__":
     cli()
