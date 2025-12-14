@@ -5,9 +5,9 @@ from pydantic import ValidationError
 from core import AbstractPerson
 from mappers import dict_to_person
 from validations import is_valid_ukrainian_word
-from validations.abstract_person_validator import is_valid_birthdate
-from validations.card_validator import is_valid_luna
-from validations.person_dataset_validator import validate_person_categories
+from validations.abstract_person_validations.abstract_person_validator import is_valid_birthdate
+from validations.abstract_person_validations.card_validator import is_valid_luna
+from validations.dataset_validations.person_dataset_validator import validate_person_categories
 
 
 def validate_abstract_person(
