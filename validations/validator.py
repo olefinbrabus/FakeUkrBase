@@ -3,39 +3,12 @@ from progress.bar import ShadyBar
 from pydantic import ValidationError
 
 from core import AbstractPerson
-from mappers import dict_to_person
-from validations import is_valid_ukrainian_word
-from validations.abstract_person_validations.abstract_person_validator import is_valid_birthdate
-from validations.abstract_person_validations.card_validator import is_valid_luna
-from validations.dataset_validations.person_dataset_validator import validate_person_categories
-
-
-def validate_abstract_person(
-    person_obj: AbstractPerson | dict[str, str],
-    person_cls: type[AbstractPerson] = AbstractPerson,
-) -> bool:
-    if isinstance(person_obj, dict):
-        person_obj = dict_to_person(person_obj, person_cls)
-
-    if person_obj.id < 0:
-        print(f"Invalid id: {person_obj.id}")
-        return False
-
-    if not is_valid_luna(person_obj.credit_card.number):
-        print(f"Invalid credit card number: {person_obj.credit_card.number}")
-        return False
-
-    if not is_valid_birthdate(person_obj.birthdate):
-        print(f"Invalid birthdate: {person_obj.birthdate}")
-        return False
-
-    if not is_valid_ukrainian_word(
-        person_obj.first_name, person_obj.second_name, person_obj.middle_name
-    ):
-        print("Invalid ukrainian name")
-        return False
-
-    return True
+from validations.abstract_person_validations.abstract_person_validator import (
+    validate_abstract_person,
+)
+from validations.dataset_validations.person_dataset_validator import (
+    validate_person_categories,
+)
 
 
 def validate_persons(

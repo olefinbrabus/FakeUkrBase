@@ -4,7 +4,9 @@ from validations.abstract_person_validations.abstract_person_validator import (
 )
 
 from validations.abstract_person_validations.base_email_validator import is_valid_email
-from validations.abstract_person_validations.phone_validator import is_valid_phone_number
+from validations.abstract_person_validations.phone_validator import (
+    is_valid_phone_number,
+)
 
 # from employee_validations import (
 #

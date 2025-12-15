@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from mimesis import Gender
 from phonenumbers.phonenumber import PhoneNumber
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from pydantic import BaseModel, EmailStr, Field, ConfigDict, PositiveInt
 from pydantic_extra_types.payment import PaymentCardNumber
 
 
@@ -45,7 +45,7 @@ class SalaryPayment(ConfigModel):
 
 class AbstractPerson(ConfigModel):
 
-    id: int
+    id: PositiveInt
     sex: Gender
     first_name: str
     first_name_eng_lang: str
@@ -60,14 +60,14 @@ class AbstractPerson(ConfigModel):
     birthdate: date
     phone_number: PhoneNumber
     credit_card: CreditCard
-    # future features for better analyse
+    # future features for better analyze
     # amount_of_violation: int = None
 
 
 class AbstractEmployee(AbstractPerson):
 
     job: Job
-    length_of_work: int
+    length_of_work: PositiveInt
     working_email_address: EmailStr | None = None
     working_phone_number: PhoneNumber | None = None
     contract_payment: Decimal = Field(default=Decimal("0.00"))
