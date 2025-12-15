@@ -17,9 +17,10 @@ def test_valid_from_dict(valid_person_dict: dict):
         pytest.fail(e)
 
 
-def test_invalid_from_dict(invalid_person_dict_for_pydantic: dict, valid_person_dict: dict):
+def test_invalid_from_dict(
+    invalid_person_dict_for_pydantic: dict, valid_person_dict: dict
+):
     person: AbstractPerson
-
 
     for k, v in invalid_person_dict_for_pydantic.items():
         copied_person = copy.deepcopy(valid_person_dict)
@@ -40,13 +41,14 @@ def test_valid_in_validator(valid_person_dict: dict):
         pytest.fail(e)
 
 
-def test_invalid_in_validator(invalid_person_dict_for_validator: dict, valid_person_dict: dict):
+def test_invalid_in_validator(
+    invalid_person_dict_for_validator: dict, valid_person_dict: dict
+):
     person: AbstractPerson
     for k, v in invalid_person_dict_for_validator.items():
         print(v)
         if v == Gender.MALE:
             continue
-
 
         copied_person = copy.deepcopy(valid_person_dict)
         copied_person[k] = v

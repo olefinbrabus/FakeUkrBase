@@ -16,19 +16,19 @@ def load():
     df = salary.merge(persons, left_on="person_id", right_on="id", how="left")
     return df
 
+
 def run_descriptive(df: pd.DataFrame):
     stats = df[["gross_amount", "bonus_amount", "penalty_amount"]].describe()
     delays = df["is_delayed"].value_counts(normalize=True) * 100
 
-    return {
-        "summary": stats,
-        "delay_distribution": delays
-    }
+    return {"summary": stats, "delay_distribution": delays}
+
 
 def run_correlations(df: pd.DataFrame):
     numeric = df.select_dtypes(include="number")
     corr_matrix = numeric.corr(method="spearman")
     return corr_matrix
+
 
 def run_regression(df: pd.DataFrame):
     data = df.dropna(subset=["length_of_work", "gross_amount"])
@@ -41,7 +41,7 @@ def run_regression(df: pd.DataFrame):
     return {
         "coef": model.coef_[0],
         "intercept": model.intercept_,
-        "r2_score": model.score(X, y)
+        "r2_score": model.score(X, y),
     }
 
 
@@ -52,6 +52,7 @@ def run_timeseries(df):
 
     return {"trend": ts, "forecast": forecast}
 
+
 def run_clustering(df):
     subset = df[["gross_amount", "length_of_work"]].dropna()
     model = KMeans(n_clusters=3, random_state=42)
@@ -59,10 +60,12 @@ def run_clustering(df):
 
     return subset, model.cluster_centers_
 
+
 def run_anomaly(df):
     model = IsolationForest(random_state=42)
     df["anomaly"] = model.fit_predict(df[["gross_amount"]])
     return df[df["anomaly"] == -1]
+
 
 def run_statistics(method="all", *, show_plots_flag: bool = True):
     df = load()
@@ -94,6 +97,7 @@ def run_statistics(method="all", *, show_plots_flag: bool = True):
     report_text = interpret(results)
 
     return results, report_text
+
 
 def show_plots(df: pd.DataFrame):
 
@@ -147,6 +151,7 @@ def interpret(results: dict) -> str:
 
     corr = results.get("correlation")
     if corr is not None and "gross_amount" in corr.index:
+
         def safe_corr(col: str):
             try:
                 return float(corr.loc["gross_amount", col])
@@ -166,7 +171,8 @@ def interpret(results: dict) -> str:
             lines.append(
                 "2) Кореляційний аналіз\n"
                 "Спостерігається наступна кореляція заробітної плати з іншими показниками: "
-                + "; ".join(parts) + "."
+                + "; ".join(parts)
+                + "."
             )
 
     desc = results.get("descriptive")
@@ -206,6 +212,8 @@ def interpret(results: dict) -> str:
         )
 
     if not lines:
-        return "Аналітичний звіт поки що порожній — не вдалося інтерпретувати результати."
+        return (
+            "Аналітичний звіт поки що порожній — не вдалося інтерпретувати результати."
+        )
 
     return "\n\n".join(lines)

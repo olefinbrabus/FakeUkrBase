@@ -72,6 +72,7 @@ def invalid_person_dict_for_validator() -> dict:
         ),
     }
 
+
 @pytest.fixture
 def invalid_person_dict_for_pydantic() -> dict:
     return {
@@ -83,11 +84,11 @@ def invalid_person_dict_for_pydantic() -> dict:
         "middle_name_eng_lang": [1, 2, 3],
         "second_name": True,
         "second_name_eng_lang": False,
-        "email_address": 5/2,
+        "email_address": 5 / 2,
         "address": 100_000_000,
         "address_eng_lang": 5**2,
         "type_populated_area": 43,
         "birthdate": 29328.13,
         "phone_number": 380945670584012312,
-        "credit_card": True
+        "credit_card": True,
     }

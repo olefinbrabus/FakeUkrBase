@@ -130,7 +130,15 @@ def cli_olap(full: bool) -> None:
     "--method",
     "-m",
     type=click.Choice(
-        ["descriptive", "correlation", "regression", "timeseries", "clustering", "anomaly", "all"],
+        [
+            "descriptive",
+            "correlation",
+            "regression",
+            "timeseries",
+            "clustering",
+            "anomaly",
+            "all",
+        ],
         case_sensitive=False,
     ),
     default="all",
@@ -143,7 +151,7 @@ def cli_olap(full: bool) -> None:
     default=False,
     help="Не показувати діаграми, лише текстовий звіт.",
 )
-def cli_statistics(method:str, no_plots: bool) -> None:
+def cli_statistics(method: str, no_plots: bool) -> None:
     results, report_text = run_statistics(
         method=method.lower(),
         show_plots_flag=not no_plots,
@@ -151,6 +159,7 @@ def cli_statistics(method:str, no_plots: bool) -> None:
 
     click.secho("Аналітичний звіт:", fg="cyan")
     click.echo(report_text)
+
 
 cli.add_command(cli_generate_person)
 cli.add_command(cli_read_persons)
