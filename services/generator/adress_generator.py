@@ -94,7 +94,7 @@ def create_address() -> dict:
     return {
         "eng_name": row["ADM4_EN"],
         "ukr_name": row["ADM4_UK"],
-        "category": row["category"],  # уже нормализованный тип
+        "category": row["category"],
     }
 
 

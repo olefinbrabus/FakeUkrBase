@@ -2,6 +2,7 @@ import os
 import pathlib
 import random
 import tempfile
+from typing import Any
 
 from faker import Faker
 
@@ -42,3 +43,8 @@ SESSION_PERSON_FILE_DIR = os.path.join(
 SESSION_SALARY_FILE_DIR = os.path.join(
     tempfile.gettempdir(), "fakeukrbase_salary_session.parquet"
 )
+
+
+def cli_set_seed(seed: Any) -> None:
+    fake.seed_instance(seed)
+    base_random.seed(seed)
