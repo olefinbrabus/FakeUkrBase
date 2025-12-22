@@ -95,7 +95,7 @@ def generate_persons(count: int, person_cls: type[AbstractPerson] = AbstractPers
 
     generator_person_service = GeneratorPersonService(person_cls=person_cls)
     bar = ShadyBar(message=f"Create {person_cls.__name__}'s...", max=count)
-    for i in range(count):
+    for i in range(1, count + 1):
         person, salary = generator_person_service.make_person(i)
         persons_list.append(person)
         if salary is not None:

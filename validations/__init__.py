@@ -1,20 +1,4 @@
-from validations.abstract_person_validations.abstract_person_validator import (
-    is_valid_birthdate,
-    is_valid_ukrainian_word,
-)
+from .validator import validate_persons
+from .abstract_person_validations.phone_validator import is_valid_phone_number
 
-from validations.abstract_person_validations.base_email_validator import is_valid_email
-from validations.abstract_person_validations.phone_validator import (
-    is_valid_phone_number,
-)
-
-# from employee_validations import (
-#
-# )
-
-__all__ = [
-    is_valid_email,
-    is_valid_phone_number,
-    is_valid_birthdate,
-    is_valid_ukrainian_word,
-]
+__all__ = (validate_persons, is_valid_phone_number)

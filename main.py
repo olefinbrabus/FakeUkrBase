@@ -4,26 +4,21 @@ from typing import Any
 import click
 import pandas as pd
 
-from config import fake, base_random, SESSION_PERSON_FILE_DIR, SESSION_SALARY_FILE_DIR
+from config import SESSION_PERSON_FILE_DIR, SESSION_SALARY_FILE_DIR, cli_set_seed
 from core import AbstractPerson, AbstractEmployee
 from dataframes.dataframe_person import PersonDataFrameManager
 from display.display import display_df
 from mappers.salary_mappers import salaries_to_dataframe
 from services.db.save import save_frames_to_db
 from services.etl.postgres_to_clickhouse import run_etl
-from services.generator.generator import generate_persons
+from services.generator import generate_persons
 from services.statistics.analytics_methods import run_statistics
-from validations.validator import validate_persons
+from validations import validate_persons
 
 
 @click.group()
 def cli():
     pass
-
-
-def cli_set_seed(seed: Any) -> None:
-    fake.seed_instance(seed)
-    base_random.seed(seed)
 
 
 def cli_set_person(person: str) -> type[AbstractPerson]:
