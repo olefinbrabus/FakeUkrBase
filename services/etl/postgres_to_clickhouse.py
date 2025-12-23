@@ -3,20 +3,16 @@ from __future__ import annotations
 import logging
 import os
 from dataclasses import dataclass
-from typing import Iterable, List, Dict, Any
+from typing import Iterable, Sequence, Callable, Any, List
 
 import psycopg2
-import psycopg2.extras
 from clickhouse_driver import Client
 
 logger = logging.getLogger("etl_pg_to_ch")
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
 
-@dataclass
+@dataclass(frozen=True)
 class DBConfig:
     # Postgres
     pg_host: str
@@ -51,14 +47,13 @@ def load_config() -> DBConfig:
 
 
 def get_pg_conn(cfg: DBConfig):
-    conn = psycopg2.connect(
+    return psycopg2.connect(
         host=cfg.pg_host,
         port=cfg.pg_port,
         dbname=cfg.pg_db,
         user=cfg.pg_user,
         password=cfg.pg_password,
     )
-    return conn
 
 
 def get_ch(cfg: DBConfig) -> Client:
@@ -68,25 +63,51 @@ def get_ch(cfg: DBConfig) -> Client:
         database=cfg.ch_db,
         user=cfg.ch_user,
         password=cfg.ch_password,
-        settings={"use_numpy": False},
+        settings={
+            "use_numpy": False,
+            "max_insert_block_size": cfg.batch_size,
+            "max_block_size": cfg.batch_size,
+        },
     )
 
 
 def truncate(ch: Client) -> None:
-    ch.execute("TRUNCATE TABLE IF EXISTS dim_employee")
-    ch.execute("TRUNCATE TABLE IF EXISTS dim_job")
-    ch.execute("TRUNCATE TABLE IF EXISTS salary_fact")
+    ch.execute("TRUNCATE TABLE dim_employee")
+    ch.execute("TRUNCATE TABLE dim_job")
+    ch.execute("TRUNCATE TABLE salary_fact")
     logger.info("ClickHouse tables truncated.")
 
 
-def extract(pg_conn, query: str, batch_size: int) -> Iterable[List[Dict[str, Any]]]:
-    with pg_conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+def extract_tuples(pg_conn, query: str, batch_size: int) -> Iterable[List[tuple]]:
+    cur_name = "etl_cursor"
+    with pg_conn.cursor(name=cur_name) as cur:
+        cur.itersize = batch_size
         cur.execute(query)
         while True:
-            chunk = cur.fetchmany(batch_size)
-            if not chunk:
+            rows = cur.fetchmany(batch_size)
+            if not rows:
                 break
-            yield [dict(row) for row in chunk]
+            yield rows
+
+
+def load_table(
+    *,
+    pg_conn,
+    ch: Client,
+    pg_query: str,
+    ch_insert_sql: str,
+    transform: Callable[[Sequence[tuple]], List[list]],
+    batch_size: int,
+    label: str,
+) -> int:
+    total = 0
+    for rows in extract_tuples(pg_conn, pg_query, batch_size):
+        payload = transform(rows)
+        if payload:
+            ch.execute(ch_insert_sql, payload, types_check=False)
+            total += len(payload)
+    logger.info("%s → %d rows loaded.", label, total)
+    return total
 
 
 def run_etl(full_reload: bool = False) -> None:
@@ -97,10 +118,11 @@ def run_etl(full_reload: bool = False) -> None:
     try:
         if full_reload:
             truncate(ch)
+        else:
+            logger.warning("full_reload=False: repeated runs will append duplicates to ClickHouse tables.")
 
-        # dim_employee
         emp_q = """
-            SELECT 
+            SELECT
                 id AS employee_id,
                 sex,
                 first_name,
@@ -114,80 +136,89 @@ def run_etl(full_reload: bool = False) -> None:
             ORDER BY id
         """
 
-        total_emps = 0
-        for batch in extract(pg, emp_q, cfg.batch_size):
-            data = []
-            for r in batch:
-                second = str(r.get("second_name") or "").strip()
-                first = str(r.get("first_name") or "").strip()
-                middle = str(r.get("middle_name") or "").strip()
+        emp_insert = """
+            INSERT INTO dim_employee
+            (employee_id, sex, full_name, email, address_uk, populated_type, birthdate)
+            VALUES
+        """
 
-                full_name_parts = [second, first, middle]
-                full_name = " ".join(p for p in full_name_parts if p)
+        def tr_emp(rows: Sequence[tuple]) -> List[list]:
+            out: List[list] = []
+            for (
+                employee_id,
+                sex,
+                first_name,
+                middle_name,
+                second_name,
+                email,
+                address_uk,
+                populated_type,
+                birthdate,
+            ) in rows:
+                second = (second_name or "").strip()
+                first = (first_name or "").strip()
+                middle = (middle_name or "").strip()
+                full_name = " ".join(p for p in (second, first, middle) if p)
 
-                data.append(
+                out.append(
                     [
-                        int(r["employee_id"]),
-                        str(r.get("sex") or ""),
+                        int(employee_id),
+                        str(sex or ""),
                         full_name,
-                        str(r.get("email") or ""),
-                        str(r.get("address_uk") or ""),
-                        str(r.get("populated_type") or ""),
-                        r.get("birthdate"),  # psycopg2 date -> ClickHouse Date
+                        str(email or ""),
+                        str(address_uk or ""),
+                        str(populated_type or ""),
+                        birthdate,
                     ]
                 )
+            return out
 
-            if data:
-                ch.execute(
-                    """
-                    INSERT INTO dim_employee
-                    (employee_id, sex, full_name, email, address_uk, populated_type, birthdate)
-                    VALUES
-                    """,
-                    data,
-                )
-                total_emps += len(data)
+        load_table(
+            pg_conn=pg,
+            ch=ch,
+            pg_query=emp_q,
+            ch_insert_sql=emp_insert,
+            transform=tr_emp,
+            batch_size=cfg.batch_size,
+            label="dim_employee",
+        )
 
-        logger.info("dim_employee → %d rows loaded.", total_emps)
-
-        # dim_job
         job_q = """
-            SELECT 
-                id AS job_id,
-                name,
-                qualification,
-                address
+            SELECT id AS job_id, name, qualification, address
             FROM jobs
             ORDER BY id
         """
 
-        total_jobs = 0
-        for batch in extract(pg, job_q, cfg.batch_size):
-            data = [
-                [
-                    int(r["job_id"]),
-                    str(r.get("name") or ""),
-                    str(r.get("qualification") or ""),
-                    str(r.get("address") or ""),  # нормализация None -> ""
-                ]
-                for r in batch
-            ]
+        job_insert = """
+            INSERT INTO dim_job (job_id, name, qualification, address)
+            VALUES
+        """
 
-            if data:
-                ch.execute(
-                    """
-                    INSERT INTO dim_job(job_id, name, qualification, address)
-                    VALUES
-                    """,
-                    data,
+        def tr_job(rows: Sequence[tuple]) -> List[list]:
+            out: List[list] = []
+            for job_id, name, qualification, address in rows:
+                out.append(
+                    [
+                        int(job_id),
+                        str(name or ""),
+                        str(qualification or ""),
+                        str(address or ""),
+                    ]
                 )
-                total_jobs += len(data)
+            return out
 
-        logger.info("dim_job → %d rows loaded.", total_jobs)
+        load_table(
+            pg_conn=pg,
+            ch=ch,
+            pg_query=job_q,
+            ch_insert_sql=job_insert,
+            transform=tr_job,
+            batch_size=cfg.batch_size,
+            label="dim_job",
+        )
 
-        # salary_fact
         sal_q = """
-            SELECT 
+            SELECT
                 employee_id,
                 job_id,
                 month,
@@ -201,35 +232,50 @@ def run_etl(full_reload: bool = False) -> None:
             ORDER BY employee_id, month
         """
 
-        total_sal = 0
-        for batch in extract(pg, sal_q, cfg.batch_size):
-            data = [
-                [
-                    int(r["employee_id"]),
-                    int(r["job_id"]),
-                    r.get("month"),
-                    float(r.get("gross_amount") or 0.0),
-                    float(r.get("bonus_amount") or 0.0),
-                    float(r.get("penalty_amount") or 0.0),
-                    1 if r.get("is_delayed") else 0,
-                    int(r.get("delay_days") or 0),
-                    r.get("pay_date"),
-                ]
-                for r in batch
-            ]
+        sal_insert = """
+            INSERT INTO salary_fact
+            (employee_id, job_id, month, gross, bonus, penalty, is_delayed, delay_days, pay_date)
+            VALUES
+        """
 
-            if data:
-                ch.execute(
-                    """
-                    INSERT INTO salary_fact
-                    (employee_id, job_id, month, gross, bonus, penalty, is_delayed, delay_days, pay_date)
-                    VALUES
-                    """,
-                    data,
+        def tr_sal(rows: Sequence[tuple]) -> List[list]:
+            out: List[list] = []
+            for (
+                employee_id,
+                job_id,
+                month,
+                gross_amount,
+                bonus_amount,
+                penalty_amount,
+                is_delayed,
+                delay_days,
+                pay_date,
+            ) in rows:
+                out.append(
+                    [
+                        int(employee_id),
+                        int(job_id),
+                        month,
+                        float(gross_amount or 0.0),
+                        float(bonus_amount or 0.0),
+                        float(penalty_amount or 0.0),
+                        1 if is_delayed else 0,
+                        int(delay_days or 0),
+                        pay_date,
+                    ]
                 )
-                total_sal += len(data)
+            return out
 
-        logger.info("salary_fact → %d rows loaded.", total_sal)
+        load_table(
+            pg_conn=pg,
+            ch=ch,
+            pg_query=sal_q,
+            ch_insert_sql=sal_insert,
+            transform=tr_sal,
+            batch_size=cfg.batch_size,
+            label="salary_fact",
+        )
+
         logger.info("ETL FINISHED")
 
     finally:
