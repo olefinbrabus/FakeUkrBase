@@ -1,15 +1,18 @@
 import datetime
 from decimal import Decimal
 
+import pandas as pd
 import pytest
 from mimesis import Gender
 from phonenumbers import PhoneNumber
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from core import CreditCard
+from core import CreditCard, AbstractPerson
 from core.enums import TypeCreditCard, ExtendedPaymentCardBrand, QualificationType
-from core.models import Job
+from core.models import Job, AbstractEmployee, SalaryPayment
+from mappers import persons_to_dataframe
+from mappers.salary_mappers import salaries_to_dataframe
 from services.db.session import Base
 
 
@@ -85,22 +88,22 @@ def valid_employee_dict(valid_person_dict) -> dict:
             address="Вишгород"
         ),
         "length_of_work": 2,
-        "contract_payment": Decimal(27000.00)
+        "contract_payment": Decimal("27000.00")
 
 
     }
 
 @pytest.fixture
-def valid_salary():
+def valid_salary() -> dict:
     return {
         "person_id": 1,
         "job_name": "Програміст",
         "job_qualification": "Junior",
         "job_address": "Вишгород",
         "month": "2025-01-01",
-        "gross_amount": 27000.00,
-        "bonus_amount": 500.00,
-        "penalty_amount": 0.00,
+        "gross_amount": Decimal("26766.00"),
+        "bonus_amount": Decimal("500.00"),
+        "penalty_amount": Decimal("0.00"),
         "is_delayed": False,
         "delay_days": 0,
         "pay_date": "2025-01-31",
@@ -140,5 +143,29 @@ def session_factory(engine):
     test_session = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
     def _factory():
         return test_session()
-    return _factory
+    yield _factory
 
+@pytest.fixture()
+def valid_abstract_person_frame(valid_person_dict):
+    dataframe = persons_to_dataframe([AbstractPerson(**valid_person_dict),])
+    yield dataframe
+
+@pytest.fixture()
+def valid_employee_frame(valid_employee_dict):
+    dataframe = persons_to_dataframe([AbstractEmployee(**valid_employee_dict),])
+    yield dataframe
+
+@pytest.fixture
+def valid_salary_frame(valid_employee_dict, valid_salary):
+    payments = []
+    for m in range(1, 13):
+        month = f"2025-{m:02d}-01"
+        pay_date = pd.Timestamp(month) + pd.offsets.MonthEnd(0)
+        p = SalaryPayment(**(valid_salary | {"month": month, "pay_date": str(pay_date.date())}))
+        payments.append(p)
+
+    df = salaries_to_dataframe(
+        [AbstractEmployee(**valid_employee_dict)],
+        [payments],
+    )
+    return df

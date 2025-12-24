@@ -13,11 +13,12 @@ from sqlalchemy.orm import relationship
 
 from .session import Base
 
+PK_INT = BigInteger().with_variant(Integer, "sqlite")
 
 class EmployeeDB(Base):
     __tablename__ = "employees"
 
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id = Column(PK_INT, primary_key=True, autoincrement=True)
     # external_id = Column(BigInteger, nullable=False, index=True)
 
     sex = Column(String, nullable=False)
@@ -51,7 +52,7 @@ class EmployeeDB(Base):
 class JobDB(Base):
     __tablename__ = "jobs"
 
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id = Column(PK_INT, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
     qualification = Column(String, nullable=False)
     address = Column(String)
@@ -66,7 +67,7 @@ class JobDB(Base):
 class SalaryDB(Base):
     __tablename__ = "salaries"
 
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id = Column(PK_INT, primary_key=True, autoincrement=True)
 
     employee_id = Column(
         BigInteger, ForeignKey("employees.id", ondelete="CASCADE"), nullable=False
