@@ -4,9 +4,13 @@ from decimal import Decimal
 import pytest
 from mimesis import Gender
 from phonenumbers import PhoneNumber
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from core import CreditCard
-from core.enums import TypeCreditCard, ExtendedPaymentCardBrand
+from core.enums import TypeCreditCard, ExtendedPaymentCardBrand, QualificationType
+from core.models import Job
+from services.db.session import Base
 
 
 @pytest.fixture
@@ -72,6 +76,36 @@ def invalid_person_dict_for_validator() -> dict:
         ),
     }
 
+@pytest.fixture
+def valid_employee_dict(valid_person_dict) -> dict:
+    return valid_person_dict | {
+        "job": Job(
+            name="Програміст",
+            qualification=QualificationType.junior,
+            address="Вишгород"
+        ),
+        "length_of_work": 2,
+        "contract_payment": Decimal(27000.00)
+
+
+    }
+
+@pytest.fixture
+def valid_salary():
+    return {
+        "person_id": 1,
+        "job_name": "Програміст",
+        "job_qualification": "Junior",
+        "job_address": "Вишгород",
+        "month": "2025-01-01",
+        "gross_amount": 27000.00,
+        "bonus_amount": 500.00,
+        "penalty_amount": 0.00,
+        "is_delayed": False,
+        "delay_days": 0,
+        "pay_date": "2025-01-31",
+    }
+
 
 @pytest.fixture
 def invalid_person_dict_for_pydantic() -> dict:
@@ -92,3 +126,19 @@ def invalid_person_dict_for_pydantic() -> dict:
         "phone_number": 380945670584012312,
         "credit_card": True,
     }
+
+
+@pytest.fixture()
+def engine():
+    eng = create_engine("sqlite+pysqlite:///:memory:", future=True)
+    Base.metadata.create_all(eng)
+    yield eng
+    Base.metadata.drop_all(eng)
+
+@pytest.fixture()
+def session_factory(engine):
+    test_session = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
+    def _factory():
+        return test_session()
+    return _factory
+

@@ -9,7 +9,9 @@ import psycopg2
 from clickhouse_driver import Client
 
 logger = logging.getLogger("etl_pg_to_ch")
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
+)
 
 
 @dataclass(frozen=True)
@@ -90,6 +92,52 @@ def extract_tuples(pg_conn, query: str, batch_size: int) -> Iterable[List[tuple]
             yield rows
 
 
+def tr_job(rows: Sequence[tuple]) -> List[list]:
+    out: List[list] = []
+    for job_id, name, qualification, address in rows:
+        out.append(
+            [
+                int(job_id),
+                str(name or ""),
+                str(qualification or ""),
+                str(address or ""),
+            ]
+        )
+    return out
+
+
+def tr_emp(rows: Sequence[tuple]) -> List[list]:
+    out: List[list] = []
+    for (
+        employee_id,
+        sex,
+        first_name,
+        middle_name,
+        second_name,
+        email,
+        address_uk,
+        populated_type,
+        birthdate,
+    ) in rows:
+        second = (second_name or "").strip()
+        first = (first_name or "").strip()
+        middle = (middle_name or "").strip()
+        full_name = " ".join(p for p in (second, first, middle) if p)
+
+        out.append(
+            [
+                int(employee_id),
+                str(sex or ""),
+                full_name,
+                str(email or ""),
+                str(address_uk or ""),
+                str(populated_type or ""),
+                birthdate,
+            ]
+        )
+    return out
+
+
 def load_table(
     *,
     pg_conn,
@@ -119,7 +167,9 @@ def run_etl(full_reload: bool = False) -> None:
         if full_reload:
             truncate(ch)
         else:
-            logger.warning("full_reload=False: repeated runs will append duplicates to ClickHouse tables.")
+            logger.warning(
+                "full_reload=False: repeated runs will append duplicates to ClickHouse tables."
+            )
 
         emp_q = """
             SELECT
@@ -142,37 +192,6 @@ def run_etl(full_reload: bool = False) -> None:
             VALUES
         """
 
-        def tr_emp(rows: Sequence[tuple]) -> List[list]:
-            out: List[list] = []
-            for (
-                employee_id,
-                sex,
-                first_name,
-                middle_name,
-                second_name,
-                email,
-                address_uk,
-                populated_type,
-                birthdate,
-            ) in rows:
-                second = (second_name or "").strip()
-                first = (first_name or "").strip()
-                middle = (middle_name or "").strip()
-                full_name = " ".join(p for p in (second, first, middle) if p)
-
-                out.append(
-                    [
-                        int(employee_id),
-                        str(sex or ""),
-                        full_name,
-                        str(email or ""),
-                        str(address_uk or ""),
-                        str(populated_type or ""),
-                        birthdate,
-                    ]
-                )
-            return out
-
         load_table(
             pg_conn=pg,
             ch=ch,
@@ -193,19 +212,6 @@ def run_etl(full_reload: bool = False) -> None:
             INSERT INTO dim_job (job_id, name, qualification, address)
             VALUES
         """
-
-        def tr_job(rows: Sequence[tuple]) -> List[list]:
-            out: List[list] = []
-            for job_id, name, qualification, address in rows:
-                out.append(
-                    [
-                        int(job_id),
-                        str(name or ""),
-                        str(qualification or ""),
-                        str(address or ""),
-                    ]
-                )
-            return out
 
         load_table(
             pg_conn=pg,

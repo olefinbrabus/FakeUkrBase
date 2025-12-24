@@ -46,17 +46,3 @@ def calculate_contract_payment(
     )
 
     return Decimal(str(raw)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-
-
-if __name__ == "__main__":
-    [
-        print(
-            calculate_contract_payment(
-                populate_area_type="village",
-                qualification=QualificationType.junior,
-                job_name="Програміст",
-                employee_stage=4,
-            )
-        )
-        for _ in range(100)
-    ]

@@ -1,13 +1,21 @@
+import logging
 from decimal import Decimal
+from typing import Callable
 
 import pandas as pd
+from sqlalchemy.orm import Session
 
 from .models import EmployeeDB, JobDB, SalaryDB
 from .session import SessionLocal
 
+logger = logging.getLogger(__name__)
 
-def save_frames_to_db(persons_df: pd.DataFrame, salary_df: pd.DataFrame) -> None:
-    session = SessionLocal()
+
+def save_frames_to_db(
+    persons_df: pd.DataFrame,
+    salary_df: pd.DataFrame,
+    session: Callable[[], Session] = SessionLocal,
+) -> None:
     try:
         job_cache: dict[tuple[str, str, str | None], JobDB] = {}
 
@@ -105,7 +113,8 @@ def save_frames_to_db(persons_df: pd.DataFrame, salary_df: pd.DataFrame) -> None
 
         session.commit()
 
-    except Exception:
+    except Exception as e:
+        logger.log(logging.ERROR, e)
         session.rollback()
         raise
     finally:

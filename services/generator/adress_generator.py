@@ -96,8 +96,3 @@ def create_address() -> dict:
         "ukr_name": row["ADM4_UK"],
         "category": row["category"],
     }
-
-
-if __name__ == "__main__":
-    for _ in range(10):
-        print(create_address())
