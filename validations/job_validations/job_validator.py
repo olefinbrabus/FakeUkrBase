@@ -1,10 +1,13 @@
 from core.countries_data.ukraine.job_dict import JOB_FACTORS
 from core.models import Job
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def validate_job(job: Job):
     if job.name not in JOB_FACTORS.keys():
-        print(f"Job {job.name} not found")
+        logger.log(logging.ERROR, f"Job {job.name} not found")
         return False
     return True
 

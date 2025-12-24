@@ -29,7 +29,6 @@ def make_employee(
         job_name=job.name,
         employee_stage=length_of_work,
     )
-    # print(contract_payment)
 
     employee = AbstractEmployee(
         job=job,
@@ -103,7 +102,3 @@ def generate_persons(count: int, person_cls: type[AbstractPerson] = AbstractPers
         bar.next()
     bar.finish()
     return persons_list, salary_payments_list
-
-
-if __name__ == "__main__":
-    print(generate_persons(count=5, person_cls=AbstractEmployee))

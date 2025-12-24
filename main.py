@@ -75,7 +75,7 @@ def cli_generate_person(count: int, person: str, seed: Any) -> None:
 
 @click.command("read")
 @click.option("--read", type=str, help="Read array of persons")
-def cli_read_persons(read):
+def cli_read_persons_to_parquet(read):
     pass
 
 
@@ -91,6 +91,7 @@ def cli_display_person(count: int, salary) -> None:
     salary_df = pd.read_parquet(SESSION_SALARY_FILE_DIR)
 
     display_df(person_df, salary_df)
+    click.secho("Display Completed", fg="green")
 
 
 @click.command("save")
@@ -102,7 +103,6 @@ def cli_display_person(count: int, salary) -> None:
 # )
 def cli_save_file():
     from services.db.session import Base, engine
-    from services.db import models  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
 
@@ -110,7 +110,7 @@ def cli_save_file():
     salary_df = pd.read_parquet(SESSION_SALARY_FILE_DIR)
 
     save_frames_to_db(person_df, salary_df)
-    click.echo("Data saved to Postgres database.")
+    click.secho("Data saved to Postgres database.", fg="green")
 
 
 @click.command("olap")
@@ -138,13 +138,13 @@ def cli_olap(full: bool) -> None:
     ),
     default="all",
     show_default=True,
-    help="Який метод аналітики виконати.",
+    help="Which type of statistics to show",
 )
 @click.option(
     "--no-plots",
     is_flag=True,
     default=False,
-    help="Не показувати діаграми, лише текстовий звіт.",
+    help="Show only analytics log",
 )
 def cli_statistics(method: str, no_plots: bool) -> None:
     results, report_text = run_statistics(
@@ -152,12 +152,12 @@ def cli_statistics(method: str, no_plots: bool) -> None:
         show_plots_flag=not no_plots,
     )
 
-    click.secho("Аналітичний звіт:", fg="cyan")
+    click.secho("Analytics log:", fg="green")
     click.echo(report_text)
 
 
 cli.add_command(cli_generate_person)
-cli.add_command(cli_read_persons)
+cli.add_command(cli_read_persons_to_parquet)
 cli.add_command(cli_display_person)
 cli.add_command(cli_save_file)
 cli.add_command(cli_olap)

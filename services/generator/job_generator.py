@@ -45,10 +45,3 @@ def choose_job_by_popularity(jobs: list[str]) -> str:
 
     weights = [JOB_FACTORS[j]["popularity_coef"] for j in jobs]
     return base_random.choices(jobs, weights=weights, k=1)[0]
-
-
-if __name__ == "__main__":
-    [
-        print(create_job(populate_area_name="Біла церква", populate_area_type="city"))
-        for _ in range(100)
-    ]
