@@ -39,16 +39,22 @@ def save_frames_to_db(
                 address_en=row.get("address_eng_lang"),
                 populated_type=row.get("type_populated_area"),
                 contract_payment=row.get("contract_payment"),
-                birthdate=pd.to_datetime(row["birthdate"]).date()
-                if pd.notna(row.get("birthdate"))
-                else None,
-                phone_number=str(row.get("phone_number"))
-                if row.get("phone_number") is not None
-                else None,
+                birthdate=(
+                    pd.to_datetime(row["birthdate"]).date()
+                    if pd.notna(row.get("birthdate"))
+                    else None
+                ),
+                phone_number=(
+                    str(row.get("phone_number"))
+                    if row.get("phone_number") is not None
+                    else None
+                ),
                 working_email=row.get("working_email_address"),
-                working_phone=str(row.get("working_phone_number"))
-                if row.get("working_phone_number") is not None
-                else None,
+                working_phone=(
+                    str(row.get("working_phone_number"))
+                    if row.get("working_phone_number") is not None
+                    else None
+                ),
             )
             session.add(db_emp)
             session.flush()
@@ -56,8 +62,9 @@ def save_frames_to_db(
 
         session.commit()
 
-
-        def get_or_create_job(name: str, qualification: str, address: str | None) -> JobDB:
+        def get_or_create_job(
+            name: str, qualification: str, address: str | None
+        ) -> JobDB:
             key = (name, qualification, address)
             if key in job_cache:
                 return job_cache[key]
@@ -81,7 +88,9 @@ def save_frames_to_db(
 
         salary_df = salary_df.copy()
         salary_df["month"] = pd.to_datetime(salary_df["month"]).dt.date
-        salary_df = salary_df.drop_duplicates(subset=["person_id", "month"], keep="last")
+        salary_df = salary_df.drop_duplicates(
+            subset=["person_id", "month"], keep="last"
+        )
 
         existing: set[tuple[int, object]] = set(
             session.execute(select(SalaryDB.employee_id, SalaryDB.month)).all()

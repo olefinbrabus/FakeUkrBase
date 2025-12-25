@@ -2,7 +2,9 @@ from services.db.models import EmployeeDB, JobDB, SalaryDB
 from services.db.save import save_frames_to_db
 
 
-def test_save_frames_inserts_all(session_factory, valid_employee_frame, valid_salary_frame):
+def test_save_frames_inserts_all(
+    session_factory, valid_employee_frame, valid_salary_frame
+):
     save_frames_to_db(
         valid_employee_frame,
         valid_salary_frame,

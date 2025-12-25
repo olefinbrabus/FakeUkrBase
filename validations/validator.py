@@ -1,6 +1,5 @@
 from pandas import DataFrame
 from progress.bar import ShadyBar
-from pydantic import ValidationError
 import logging
 
 from core import AbstractPerson, AbstractEmployee
@@ -23,7 +22,7 @@ def validate_persons(
     bar = ShadyBar(message=f"Validate {person_cls.__name__}'s...", max=persons_len)
     for person in person_obj:
         if not validate_abstract_person(person, person_cls):
-            logger.log(logging.ERROR, f"{person} is not a valid", logging.ERROR)
+            logger.log(logging.ERROR, f"{person} is not a valid")
             raise Exception
         if isinstance(person, AbstractEmployee) and not validate_employee(person):
             print(f"{person} is not a valid")
@@ -45,4 +44,4 @@ def validate_person_dataset(
             logger.log(logging.ERROR, category)
             logger.log(logging.ERROR, f"in {category["_specific_word"]}")
 
-        raise ValidationError("")
+        raise Exception("")

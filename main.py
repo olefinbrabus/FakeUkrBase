@@ -95,12 +95,6 @@ def cli_display_person(count: int, salary) -> None:
 
 
 @click.command("save")
-# @click.option(
-#     # "--test",
-#     # default=DEFAULT_SAVE_DIR,
-#     # type=ClickPath(exists=False, path_type=Path),
-#     # help="Save path",
-# )
 def cli_save_file():
     from services.db.session import Base, engine
 
