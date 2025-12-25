@@ -1,5 +1,4 @@
 import pytest
-from pydantic import ValidationError
 
 from core import AbstractPerson
 from dataframes.dataframe_person import PersonDataFrameManager
@@ -14,6 +13,6 @@ def test_duplicated_fields_in_persons_validation(valid_person_dict: dict):
     try:
         if not validate_person_dataset(pdfm.dataframe, AbstractPerson):
             assert True
-    except ValidationError as e:
+    except Exception as e:
         pass
     assert False

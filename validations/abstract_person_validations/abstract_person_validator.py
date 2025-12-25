@@ -9,9 +9,16 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def is_valid_ukrainian_word(*words) -> bool:
+def is_valid_ukrainian_name(*words) -> bool:
     for word in words:
         if not bool(re.match(r"^[-а-яА-ЯЇїІіЄєҐґʼ\s]+$", word)):
+            return False
+    return True
+
+
+def is_valid_english_name(*words) -> bool:
+    for word in words:
+        if not bool(re.match(r"^[a-z ,.'-]+$", word)):
             return False
     return True
 
@@ -54,10 +61,18 @@ def validate_abstract_person(
         logger.log(logging.ERROR, f"Invalid birthdate: {person_obj.birthdate}")
         return False
 
-    if not is_valid_ukrainian_word(
+    if not is_valid_ukrainian_name(
         person_obj.first_name, person_obj.second_name, person_obj.middle_name
     ):
         logger.log(logging.ERROR, "Invalid ukrainian name")
+        return False
+
+    if not is_valid_english_name(
+        person_obj.first_name_eng_lang,
+        person_obj.second_name_eng_lang,
+        person_obj.middle_name_eng_lang,
+    ):
+        logger.log(logging.ERROR, "Invalid english name")
         return False
 
     return True

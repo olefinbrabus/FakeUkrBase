@@ -49,14 +49,35 @@ def valid_person_dict() -> dict:
 
 
 @pytest.fixture
+def invalid_person_dict_for_pydantic() -> dict:
+    return {
+        "id": "adad",
+        "sex": "no",
+        "first_name": 22,
+        "first_name_eng_lang": ("Serh1123ij", "4414"),
+        "middle_name": {},
+        "middle_name_eng_lang": [1, 2, 3],
+        "second_name": True,
+        "second_name_eng_lang": False,
+        "email_address": 5 / 2,
+        "address": 100_000_000,
+        "address_eng_lang": 5**2,
+        "type_populated_area": 43,
+        "birthdate": 29328.13,
+        "phone_number": 380945670584012312,
+        "credit_card": True,
+    }
+
+
+@pytest.fixture
 def invalid_person_dict_for_validator() -> dict:
     return {
-        "id": -1,
+        "id": 1,
         "sex": Gender.MALE,
         "first_name": "Сер1231237гій",
         "first_name_eng_lang": "Serh1123ij",
         "middle_name": "Свя1232тославович",
-        "middle_name_eng_lang": "Svjatoslavovych",
+        "middle_name_eng_lang": "Svjatoslavoc6789h",
         "second_name": "Пелех231235",
         "second_name_eng_lang": "Pelekhdsad1235",
         "email_address": "Pelekh.Serhij6666666663475435743785356478@gmail.com",
@@ -79,27 +100,55 @@ def invalid_person_dict_for_validator() -> dict:
         ),
     }
 
+
 @pytest.fixture
 def valid_employee_dict(valid_person_dict) -> dict:
     return valid_person_dict | {
         "job": Job(
             name="Програміст",
             qualification=QualificationType.junior,
-            address="Вишгород"
+            address="Вишгород",
         ),
         "length_of_work": 2,
-        "contract_payment": Decimal("27000.00")
-
-
+        "contract_payment": Decimal("27000.00"),
     }
+
+
+@pytest.fixture
+def invalid_employee_dict_for_pydantic(invalid_person_dict_for_pydantic) -> dict:
+    return invalid_person_dict_for_pydantic | {
+        "job": {
+            Job(
+                name="DSADSFJKSAFJAWK",
+                qualification=QualificationType.junior,
+                address="ADADADADAFAFAFADADASASAAFAGAHAGAFADASAS",
+            ),
+        },
+        "length_of_work": 234763245,
+        "contract_payment": Decimal("-27000.00"),
+    }
+
+
+@pytest.fixture
+def invalid_employee_dict_for_validator(invalid_person_dict_for_validator) -> dict:
+    return invalid_person_dict_for_validator | {
+        "job": Job(
+            name="DSADSFJKSAFJAWK",
+            qualification=QualificationType.junior,
+            address="ADADADADAFAFAFADADASASAAFAGAHAGAFADASAS",
+        ),
+        "length_of_work": 234763245,
+        "contract_payment": Decimal("-27000.00"),
+    }
+
 
 @pytest.fixture
 def valid_salary() -> dict:
     return {
         "person_id": 1,
-        "job_name": "Програміст",
-        "job_qualification": "Junior",
-        "job_address": "Вишгород",
+        # "job_name": "Програміст",
+        # "job_qualification": "Junior",
+        # "job_address": "Вишгород",
         "month": "2025-01-01",
         "gross_amount": Decimal("26766.00"),
         "bonus_amount": Decimal("500.00"),
@@ -111,23 +160,36 @@ def valid_salary() -> dict:
 
 
 @pytest.fixture
-def invalid_person_dict_for_pydantic() -> dict:
+def invalid_salary_for_pydantic() -> dict:
     return {
-        "id": "adad",
-        "sex": "no",
-        "first_name": 22,
-        "first_name_eng_lang": ("Serh1123ij", "4414"),
-        "middle_name": {},
-        "middle_name_eng_lang": [1, 2, 3],
-        "second_name": True,
-        "second_name_eng_lang": False,
-        "email_address": 5 / 2,
-        "address": 100_000_000,
-        "address_eng_lang": 5**2,
-        "type_populated_area": 43,
-        "birthdate": 29328.13,
-        "phone_number": 380945670584012312,
-        "credit_card": True,
+        "person_id": -545432314,
+        # "job_name": "DSADSFJKSAFJAWK",
+        # "job_qualification": "FHGKDHGJFHFJKASL",
+        # "job_address": "Вишгород",
+        "month": "1999-12-12",
+        "gross_amount": Decimal("-43878.00"),
+        "bonus_amount": Decimal("-500.00"),
+        "penalty_amount": Decimal("-4340.00"),
+        "is_delayed": True,
+        "delay_days": -6543,
+        "pay_date": "2077-01-31",
+    }
+
+
+@pytest.fixture
+def invalid_salary_for_validator() -> dict:
+    return {
+        "person_id": -545432314,
+        # "job_name": "DSADSFJKSAFJAWK",
+        # "job_qualification": "FHGKDHGJFHFJKASL",
+        # "job_address": "Вишгород",
+        "month": "1999-12-12",
+        "gross_amount": Decimal("-43878.00"),
+        "bonus_amount": Decimal("-500.00"),
+        "penalty_amount": Decimal("-4340.00"),
+        "is_delayed": True,
+        "delay_days": -6543,
+        "pay_date": "2077-01-31",
     }
 
 
@@ -138,22 +200,38 @@ def engine():
     yield eng
     Base.metadata.drop_all(eng)
 
+
 @pytest.fixture()
 def session_factory(engine):
-    test_session = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
+    test_session = sessionmaker(
+        bind=engine, autoflush=False, autocommit=False, future=True
+    )
+
     def _factory():
         return test_session()
+
     yield _factory
+
 
 @pytest.fixture()
 def valid_abstract_person_frame(valid_person_dict):
-    dataframe = persons_to_dataframe([AbstractPerson(**valid_person_dict),])
+    dataframe = persons_to_dataframe(
+        [
+            AbstractPerson(**valid_person_dict),
+        ]
+    )
     yield dataframe
+
 
 @pytest.fixture()
 def valid_employee_frame(valid_employee_dict):
-    dataframe = persons_to_dataframe([AbstractEmployee(**valid_employee_dict),])
+    dataframe = persons_to_dataframe(
+        [
+            AbstractEmployee(**valid_employee_dict),
+        ]
+    )
     yield dataframe
+
 
 @pytest.fixture
 def valid_salary_frame(valid_employee_dict, valid_salary):
@@ -161,7 +239,9 @@ def valid_salary_frame(valid_employee_dict, valid_salary):
     for m in range(1, 13):
         month = f"2025-{m:02d}-01"
         pay_date = pd.Timestamp(month) + pd.offsets.MonthEnd(0)
-        p = SalaryPayment(**(valid_salary | {"month": month, "pay_date": str(pay_date.date())}))
+        p = SalaryPayment(
+            **(valid_salary | {"month": month, "pay_date": str(pay_date.date())})
+        )
         payments.append(p)
 
     df = salaries_to_dataframe(

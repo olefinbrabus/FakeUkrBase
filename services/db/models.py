@@ -15,6 +15,7 @@ from .session import Base
 
 PK_INT = BigInteger().with_variant(Integer, "sqlite")
 
+
 class EmployeeDB(Base):
     __tablename__ = "employees"
 
