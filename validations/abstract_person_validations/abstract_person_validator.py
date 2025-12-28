@@ -18,7 +18,7 @@ def is_valid_ukrainian_name(*words) -> bool:
 
 def is_valid_english_name(*words) -> bool:
     for word in words:
-        if not bool(re.match(r"^[a-z ,.'-]+$", word)):
+        if not bool(re.match(r"^[A-Za-z ,.'-]+$", word)):
             return False
     return True
 
@@ -43,7 +43,7 @@ def validate_abstract_person(
         person_obj = dict_to_person(person_obj, person_cls)
 
     if person_obj.id < 0:
-        logger.log(logging.ERROR, f"Invalid id: {person_obj.id}")
+        logger.error(f"Invalid id: {person_obj.id}")
         return False
 
     if not validate_card(
@@ -51,20 +51,19 @@ def validate_abstract_person(
         person_obj.first_name_eng_lang,
         person_obj.second_name_eng_lang,
     ):
-        logger.log(
-            logging.ERROR,
-            f"Invalid credit card number: {person_obj.credit_card.number}",
+        logger.error(
+            f"Invalid credit card number: {person_obj.credit_card.number}"
         )
         return False
 
     if not is_valid_birthdate(person_obj.birthdate):
-        logger.log(logging.ERROR, f"Invalid birthdate: {person_obj.birthdate}")
+        logger.error(f"Invalid birthdate: {person_obj.birthdate}")
         return False
 
     if not is_valid_ukrainian_name(
         person_obj.first_name, person_obj.second_name, person_obj.middle_name
     ):
-        logger.log(logging.ERROR, "Invalid ukrainian name")
+        logger.error("Invalid ukrainian name")
         return False
 
     if not is_valid_english_name(
@@ -72,7 +71,7 @@ def validate_abstract_person(
         person_obj.second_name_eng_lang,
         person_obj.middle_name_eng_lang,
     ):
-        logger.log(logging.ERROR, "Invalid english name")
+        logger.error("Invalid english name")
         return False
 
     return True

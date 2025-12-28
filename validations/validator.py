@@ -22,10 +22,10 @@ def validate_persons(
     bar = ShadyBar(message=f"Validate {person_cls.__name__}'s...", max=persons_len)
     for person in person_obj:
         if not validate_abstract_person(person, person_cls):
-            logger.log(logging.ERROR, f"{person} is not a valid")
+            logger.error(f"{person} is not a valid")
             raise Exception
         if isinstance(person, AbstractEmployee) and not validate_employee(person):
-            print(f"{person} is not a valid")
+            logger.error(f"{person} is not a valid")
             raise Exception
         bar.next()
     bar.finish()
