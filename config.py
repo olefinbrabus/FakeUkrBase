@@ -45,6 +45,6 @@ SESSION_SALARY_FILE_DIR = os.path.join(
 )
 
 
-def cli_set_seed(seed: Any) -> None:
+def set_seed(seed: Any) -> None:
     fake.seed_instance(seed)
     base_random.seed(seed)

@@ -4,15 +4,13 @@ from typing import Any
 import click
 import pandas as pd
 
-from config import SESSION_PERSON_FILE_DIR, SESSION_SALARY_FILE_DIR, cli_set_seed
+from config import SESSION_PERSON_FILE_DIR, SESSION_SALARY_FILE_DIR, set_seed
 from core import AbstractPerson, AbstractEmployee
 from dataframes.dataframe_person import PersonDataFrameManager
 from display.display import display_df
 from mappers.salary_mappers import salaries_to_dataframe
-from services.db.save import save_frames_to_db
-from services.etl.postgres_to_clickhouse import run_etl
-from services.generator import generate_persons
-from services.statistics.analytics_methods import run_statistics
+from services import generate_persons, save_frames_to_db, run_etl, run_statistics, \
+    generate_year_salaries_per_each_employee
 from validations import validate_persons
 
 
@@ -45,10 +43,11 @@ def cli_generate_person(count: int, person: str, seed: Any) -> None:
 
     person_class = cli_set_person(person)
 
-    cli_set_seed(seed)
-
-    persons, salary_list = generate_persons(count, person_class)
-    validate_persons(persons, person_class)
+    set_seed(seed)
+    salaries = None
+    persons = generate_persons(count, person_class)
+    if issubclass(person_class, AbstractEmployee):
+        salaries = generate_year_salaries_per_each_employee(persons)
 
     person_dataframe_manager = PersonDataFrameManager(persons, person_class)
 
@@ -59,9 +58,9 @@ def cli_generate_person(count: int, person: str, seed: Any) -> None:
         object_encoding="utf8",
     )
 
-    if salary_list is not None:
+    if salaries is not None:
         salary_frame = salaries_to_dataframe(
-            all_persons_salaries_list=salary_list, employees=persons
+            all_persons_salaries_list=salaries, employees=persons
         )
 
         salary_frame.to_parquet(
@@ -70,7 +69,7 @@ def cli_generate_person(count: int, person: str, seed: Any) -> None:
             compression="snappy",
             object_encoding="utf8",
         )
-        click.secho(f"Generated {len(persons)} people", fg="green")
+    click.secho(f"Generated {len(persons)} people", fg="green")
 
 
 @click.command("read")

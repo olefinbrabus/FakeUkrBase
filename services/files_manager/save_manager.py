@@ -1,10 +1,9 @@
 import pandas as pd
 
-from config import SESSION_PERSON_FILE_DIR, SESSION_SALARY_FILE_DIR, DEFAULT_SAVE_DIR
 from dataframes.dataframe_person import PersonDataFrameManager
 from openpyxl import load_workbook
 
-from files_manager.path_manager import write_save_path
+from services.files_manager.path_manager import write_save_path
 
 
 # def save_file(frame: PersonDataFrameManager, various_path_type):

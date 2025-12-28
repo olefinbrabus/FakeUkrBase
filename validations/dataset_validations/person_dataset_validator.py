@@ -1,7 +1,9 @@
+import logging
 from pandas import DataFrame
 
 from core import AbstractPerson, AbstractEmployee
 
+logger = logging.getLogger(__name__)
 
 def validate_person_categories(
     dataset: DataFrame, person_cls: type[AbstractPerson] = AbstractPerson
@@ -17,7 +19,7 @@ def validate_person_categories(
             "id",
             "credit_card",
         ]
-    elif isinstance(person_cls, type(AbstractEmployee)):
+    if isinstance(person_cls, type(AbstractEmployee)):
         attributes_to_check_is_have_duplicate += [
             "working_email address",
             "work_phone_number",

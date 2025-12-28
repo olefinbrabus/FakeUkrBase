@@ -20,7 +20,7 @@ from services.utils import transliterate_word
 
 def make_employee(
     abstract_person: AbstractPerson,
-) -> tuple[AbstractEmployee, list[SalaryPayment]]:
+) -> AbstractEmployee:
     job = create_job(abstract_person.address, abstract_person.type_populated_area)
     length_of_work = generate_length_of_work(abstract_person.birthdate)
     contract_payment = calculate_contract_payment(
@@ -37,10 +37,7 @@ def make_employee(
         **abstract_person.__dict__,
     )
 
-    year_salary = generate_salary_payments_for_year(employee)
-
-    return employee, year_salary
-
+    return employee
 
 def make_abstract_person(id: int):
     sex = generate_sex()
@@ -80,25 +77,32 @@ class GeneratorPersonService:
     def __init__(self, person_cls: type[AbstractPerson] = AbstractPerson):
         self.person_cls = person_cls
 
-    def make_person(self, id: int) -> tuple[AbstractEmployee, list[SalaryPayment]]:
+    def make_person(self, id: int) -> AbstractEmployee:
         person = make_abstract_person(id=id)
-        salary = None
-        if self.person_cls == AbstractEmployee:
-            person, salary = make_employee(person)
-        return person, salary
+        if issubclass(self.person_cls, AbstractEmployee):
+            person = make_employee(person)
+        return person
+
+
+def generate_year_salaries_per_each_employee(employee_list: list[AbstractEmployee]) -> list[list[SalaryPayment]]:
+    salaries_per_employee_list: list[list[SalaryPayment]] = []
+    bar = ShadyBar(message=f"Create salaries's...", max=len(employee_list))
+    for employee in employee_list:
+        employee_salary = generate_salary_payments_for_year(employee)
+        salaries_per_employee_list.append(employee_salary)
+        bar.next()
+    bar.finish()
+    return salaries_per_employee_list
 
 
 def generate_persons(count: int, person_cls: type[AbstractPerson] = AbstractPerson):
     persons_list = []
-    salary_payments_list = []
 
     generator_person_service = GeneratorPersonService(person_cls=person_cls)
     bar = ShadyBar(message=f"Create {person_cls.__name__}'s...", max=count)
     for i in range(1, count + 1):
-        person, salary = generator_person_service.make_person(i)
+        person = generator_person_service.make_person(i)
         persons_list.append(person)
-        if salary is not None:
-            salary_payments_list.append(salary)
         bar.next()
     bar.finish()
-    return persons_list, salary_payments_list
+    return persons_list
