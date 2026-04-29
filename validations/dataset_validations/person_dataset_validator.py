@@ -5,6 +5,7 @@ from core import AbstractPerson, AbstractEmployee
 
 logger = logging.getLogger(__name__)
 
+
 def validate_person_categories(
     dataset: DataFrame, person_cls: type[AbstractPerson] = AbstractPerson
 ):

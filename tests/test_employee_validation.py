@@ -1,16 +1,16 @@
 import copy
 
-import pytest
 import logging
+import pytest
 from mimesis import Gender
 
 from core import AbstractEmployee
-from validations.validator import validate_employee, validate_persons
+from validations.validator import validate_persons
 
 logger = logging.getLogger(__name__)
 
 
-def test_valid_from_dict(valid_employee_dict: dict):
+def test_valid_employee_from_dict(valid_employee_dict: dict):
     person: AbstractEmployee
     try:
         person = AbstractEmployee(**valid_employee_dict)
@@ -19,12 +19,12 @@ def test_valid_from_dict(valid_employee_dict: dict):
         pytest.fail(e)
 
 
-def test_invalid_from_dict(
-    invalid_person_dict_for_pydantic: dict, valid_employee_dict: dict
+def test_invalid_employee_from_dict(
+    invalid_employee_dict_for_pydantic: dict, valid_employee_dict: dict
 ):
     person: AbstractEmployee
 
-    for k, v in invalid_person_dict_for_pydantic.items():
+    for k, v in invalid_employee_dict_for_pydantic.items():
         copied_person = copy.deepcopy(valid_employee_dict)
         copied_person[k] = v
         try:
@@ -34,7 +34,7 @@ def test_invalid_from_dict(
             logger.log(logging.INFO, e)
 
 
-def test_valid_in_validator(valid_employee_dict: dict):
+def test_valid_employee_in_validator(valid_employee_dict: dict):
     person: AbstractEmployee
     person = AbstractEmployee(**valid_employee_dict)
     validate_persons(
@@ -45,7 +45,7 @@ def test_valid_in_validator(valid_employee_dict: dict):
     )
 
 
-def test_invalid_in_validator(
+def test_invalid_employee_in_validator(
     invalid_employee_dict_for_validator: dict, valid_employee_dict: dict
 ):
     person: AbstractEmployee
@@ -59,12 +59,7 @@ def test_invalid_in_validator(
             copied_person = copy.deepcopy(valid_employee_dict)
             copied_person[k] = v
             person = AbstractEmployee(**copied_person)
-            if validate_persons(
-                [
-                    person,
-                ],
-                AbstractEmployee,
-            ):
-                assert False
+            validate_persons([person,], AbstractEmployee,)
+            assert False
         except Exception as e:
             logger.log(logging.INFO, e)

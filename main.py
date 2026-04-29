@@ -9,9 +9,14 @@ from core import AbstractPerson, AbstractEmployee
 from dataframes.dataframe_person import PersonDataFrameManager
 from display.display import display_df
 from mappers.salary_mappers import salaries_to_dataframe
-from services import generate_persons, save_frames_to_db, run_etl, run_statistics, \
-    generate_year_salaries_per_each_employee
-from validations import validate_persons
+from services import (
+    generate_persons,
+    save_frames_to_db,
+    run_etl,
+    run_statistics,
+    generate_year_salaries_per_each_employee,
+)
+from validations import validate_persons, validate_salaries
 
 
 @click.group()
@@ -48,6 +53,10 @@ def cli_generate_person(count: int, person: str, seed: Any) -> None:
     persons = generate_persons(count, person_class)
     if issubclass(person_class, AbstractEmployee):
         salaries = generate_year_salaries_per_each_employee(persons)
+
+    validate_persons(persons, person_class)
+    if issubclass(person_class, AbstractEmployee):
+        validate_salaries(salaries, persons)
 
     person_dataframe_manager = PersonDataFrameManager(persons, person_class)
 

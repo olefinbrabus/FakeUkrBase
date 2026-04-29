@@ -31,7 +31,9 @@ class Job(ConfigModel):
     address: str | None
 
 
+
 class SalaryPayment(ConfigModel):
+    person_id: PositiveInt
     month: date
     gross_amount: Decimal
     net_amount: Decimal | None = None

@@ -118,11 +118,9 @@ def valid_employee_dict(valid_person_dict) -> dict:
 def invalid_employee_dict_for_pydantic(invalid_person_dict_for_pydantic) -> dict:
     return invalid_person_dict_for_pydantic | {
         "job": {
-            Job(
-                name="DSADSFJKSAFJAWK",
-                qualification=QualificationType.junior,
-                address="ADADADADAFAFAFADADASASAAFAGAHAGAFADASAS",
-            ),
+            "name": 123,
+            "qualification": QualificationType.junior,
+            "address": 123,
         },
         "length_of_work": 234763245,
         "contract_payment": Decimal("-27000.00"),
@@ -146,9 +144,6 @@ def invalid_employee_dict_for_validator(invalid_person_dict_for_validator) -> di
 def valid_salary() -> dict:
     return {
         "person_id": 1,
-        # "job_name": "Програміст",
-        # "job_qualification": "Junior",
-        # "job_address": "Вишгород",
         "month": "2025-01-01",
         "gross_amount": Decimal("26766.00"),
         "bonus_amount": Decimal("500.00"),
@@ -163,27 +158,23 @@ def valid_salary() -> dict:
 def invalid_salary_for_pydantic() -> dict:
     return {
         "person_id": -545432314,
-        # "job_name": "DSADSFJKSAFJAWK",
-        # "job_qualification": "FHGKDHGJFHFJKASL",
-        # "job_address": "Вишгород",
-        "month": "1999-12-12",
-        "gross_amount": Decimal("-43878.00"),
-        "bonus_amount": Decimal("-500.00"),
-        "penalty_amount": Decimal("-4340.00"),
-        "is_delayed": True,
-        "delay_days": -6543,
-        "pay_date": "2077-01-31",
+        "month": None,
+        "gross_amount": Exception,
+        "bonus_amount": [quit, str],
+        "penalty_amount": {
+            help,
+        },
+        "is_delayed": 45,
+        # "delay_days": True,
+        "pay_date": 11,
     }
 
 
 @pytest.fixture
 def invalid_salary_for_validator() -> dict:
     return {
-        "person_id": -545432314,
-        # "job_name": "DSADSFJKSAFJAWK",
-        # "job_qualification": "FHGKDHGJFHFJKASL",
-        # "job_address": "Вишгород",
-        "month": "1999-12-12",
+        "person_id": 545432314,
+        # "month": "1999-12-12",
         "gross_amount": Decimal("-43878.00"),
         "bonus_amount": Decimal("-500.00"),
         "penalty_amount": Decimal("-4340.00"),

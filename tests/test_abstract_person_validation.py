@@ -10,7 +10,7 @@ from validations.validator import validate_persons
 logger = logging.getLogger(__name__)
 
 
-def test_valid_from_dict(valid_person_dict: dict):
+def test_valid_person_from_dict(valid_person_dict: dict):
     person: AbstractPerson
     try:
         person = AbstractPerson(**valid_person_dict)
@@ -19,7 +19,7 @@ def test_valid_from_dict(valid_person_dict: dict):
         pytest.fail(e)
 
 
-def test_invalid_from_dict(
+def test_invalid_person_from_dict(
     invalid_person_dict_for_pydantic: dict, valid_person_dict: dict
 ):
     person: AbstractPerson
@@ -34,7 +34,7 @@ def test_invalid_from_dict(
             logger.log(logging.INFO, e)
 
 
-def test_valid_in_validator(valid_person_dict: dict):
+def test_valid_person_in_validator(valid_person_dict: dict):
     person: AbstractPerson
     person = AbstractPerson(**valid_person_dict)
     validate_persons(
@@ -44,7 +44,7 @@ def test_valid_in_validator(valid_person_dict: dict):
     )
 
 
-def test_invalid_in_validator(
+def test_invalid_person_in_validator(
     invalid_person_dict_for_validator: dict, valid_person_dict: dict
 ):
     person: AbstractPerson
@@ -65,5 +65,5 @@ def test_invalid_in_validator(
                 ]
             ):
                 assert False
-        except Exception:
-            pass
+        except Exception as e:
+            logger.log(logging.INFO, e)

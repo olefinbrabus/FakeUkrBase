@@ -3,10 +3,11 @@ from __future__ import annotations
 import logging
 import os
 from dataclasses import dataclass
-from typing import Iterable, Sequence, Callable, Any, List
+from typing import Iterable, Sequence, Callable, List
 
 import psycopg2
 from clickhouse_driver import Client
+from progress.bar import ShadyBar
 
 logger = logging.getLogger("etl_pg_to_ch")
 logging.basicConfig(
@@ -137,25 +138,43 @@ def tr_emp(rows: Sequence[tuple]) -> List[list]:
         )
     return out
 
+def get_count(pg_conn, query: str) -> int:
+    with pg_conn.cursor() as cur:
+        cur.execute(query)
+        return cur.fetchone()[0]
 
 def load_table(
     *,
     pg_conn,
     ch: Client,
     pg_query: str,
+    pg_count_query,
     ch_insert_sql: str,
     transform: Callable[[Sequence[tuple]], List[list]],
     batch_size: int,
     label: str,
 ) -> int:
     total = 0
-    for rows in extract_tuples(pg_conn, pg_query, batch_size):
-        payload = transform(rows)
-        if payload:
-            ch.execute(ch_insert_sql, payload, types_check=False)
-            total += len(payload)
-    logger.info("%s → %d rows loaded.", label, total)
-    return total
+    total_rows = get_count(pg_conn, pg_count_query)
+
+    bar = ShadyBar(
+        message=f"{label}",
+        max=total_rows,
+        suffix="%(percent)d%% | %(index)d/%(max)d | elapsed: %(elapsed_td)s | eta: %(eta_td)s",
+    )
+
+    try:
+        for rows in extract_tuples(pg_conn, pg_query, batch_size):
+            payload = transform(rows)
+            if payload:
+                ch.execute(ch_insert_sql, payload, types_check=False)
+                total += len(payload)
+                bar.next(len(payload))
+
+        logger.info("%s → %d rows loaded.", label, total)
+        return total
+    finally:
+        bar.finish()
 
 
 def run_etl(full_reload: bool = False) -> None:
@@ -196,6 +215,7 @@ def run_etl(full_reload: bool = False) -> None:
             pg_conn=pg,
             ch=ch,
             pg_query=emp_q,
+            pg_count_query="SELECT COUNT(*) FROM employees",
             ch_insert_sql=emp_insert,
             transform=tr_emp,
             batch_size=cfg.batch_size,
@@ -217,6 +237,7 @@ def run_etl(full_reload: bool = False) -> None:
             pg_conn=pg,
             ch=ch,
             pg_query=job_q,
+            pg_count_query="SELECT COUNT(*) FROM jobs",
             ch_insert_sql=job_insert,
             transform=tr_job,
             batch_size=cfg.batch_size,
@@ -276,6 +297,7 @@ def run_etl(full_reload: bool = False) -> None:
             pg_conn=pg,
             ch=ch,
             pg_query=sal_q,
+            pg_count_query="SELECT COUNT(*) FROM salaries",
             ch_insert_sql=sal_insert,
             transform=tr_sal,
             batch_size=cfg.batch_size,
