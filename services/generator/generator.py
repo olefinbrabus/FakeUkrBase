@@ -39,6 +39,7 @@ def make_employee(
 
     return employee
 
+
 def make_abstract_person(id: int):
     sex = generate_sex()
     full_name: dict[str, str] = generate_full_name(gender=sex)
@@ -84,9 +85,16 @@ class GeneratorPersonService:
         return person
 
 
-def generate_year_salaries_per_each_employee(employee_list: list[AbstractEmployee]) -> list[list[SalaryPayment]]:
+def generate_year_salaries_per_each_employee(
+    employee_list: list[AbstractEmployee],
+) -> list[list[SalaryPayment]]:
     salaries_per_employee_list: list[list[SalaryPayment]] = []
-    bar = ShadyBar(message=f"Create salaries's...", max=len(employee_list))
+    bar = ShadyBar(
+        message=f"Create salaries's...",
+        max=len(employee_list),
+        suffix='%(percent)d%% | elapsed: %(elapsed)ds | eta: %(eta)ds'
+    )
+
     for employee in employee_list:
         employee_salary = generate_salary_payments_for_year(employee)
         salaries_per_employee_list.append(employee_salary)
@@ -99,7 +107,11 @@ def generate_persons(count: int, person_cls: type[AbstractPerson] = AbstractPers
     persons_list = []
 
     generator_person_service = GeneratorPersonService(person_cls=person_cls)
-    bar = ShadyBar(message=f"Create {person_cls.__name__}'s...", max=count)
+    bar = ShadyBar(
+        message=f"Create {person_cls.__name__}'s...",
+        max=count,
+        suffix='%(percent)d%% | elapsed: %(elapsed)ds | eta: %(eta)ds'
+    )
     for i in range(1, count + 1):
         person = generator_person_service.make_person(i)
         persons_list.append(person)

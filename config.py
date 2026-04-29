@@ -5,7 +5,7 @@ import tempfile
 from typing import Any
 
 from faker import Faker
-
+import progress
 # from mimesis import Person, Locale
 
 base_random = random.Random()
@@ -48,3 +48,10 @@ SESSION_SALARY_FILE_DIR = os.path.join(
 def set_seed(seed: Any) -> None:
     fake.seed_instance(seed)
     base_random.seed(seed)
+
+#
+# bar = progressbar.ProgressBar(widgets=[
+#     ' [', progressbar.Timer(), '] ',
+#     progressbar.Bar(),
+#     ' (', progressbar.ETA(), ') ',
+# ])

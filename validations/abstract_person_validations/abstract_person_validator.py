@@ -18,7 +18,7 @@ def is_valid_ukrainian_name(*words) -> bool:
 
 def is_valid_english_name(*words) -> bool:
     for word in words:
-        if not bool(re.match(r"^[A-Za-z ,.'-]+$", word)):
+        if not bool(re.match(r"^[A-Za-z ,ʼ.'-]+$", word)):
             return False
     return True
 
@@ -51,9 +51,7 @@ def validate_abstract_person(
         person_obj.first_name_eng_lang,
         person_obj.second_name_eng_lang,
     ):
-        logger.error(
-            f"Invalid credit card number: {person_obj.credit_card.number}"
-        )
+        logger.error(f"Invalid credit card number: {person_obj.credit_card.number}")
         return False
 
     if not is_valid_birthdate(person_obj.birthdate):

@@ -7,6 +7,7 @@ from validations.validator import validate_person_dataset
 
 logger = logging.getLogger(__name__)
 
+
 def test_duplicated_fields_in_persons_validation(valid_person_dict: dict):
     duplicated_persons = [AbstractPerson(**valid_person_dict)] * 10
 

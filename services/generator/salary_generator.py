@@ -66,6 +66,7 @@ def generate_salary_payments_for_year(
         gross = gross.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
         payment = SalaryPayment(
+            person_id=employee.id,
             month=month_date,
             gross_amount=gross,
             bonus_amount=bonus_amount,
